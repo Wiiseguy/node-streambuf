@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "streambuf"
+    "url": "https://github.com/Wiiseguy/node-streambuf.git"
   },
   "keywords": [
     "streams",
