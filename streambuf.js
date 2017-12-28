@@ -15,27 +15,40 @@ function StreamBuffer(buf) {
 	
 	// Numeric methods
 	[
-		['readInt8', 1],
-		['readInt16LE', 2],
-		['readInt16BE', 2],
-		['readInt32LE', 4],
-		['readInt32BE', 4],
-		['readUInt8', 1],
-		['readUInt16LE', 2],
-		['readUInt16BE', 2],
-		['readUInt32LE', 4],
-		['readUInt32BE', 4]
+		['Int8', 1],
+		['Int16LE', 2],
+		['Int16BE', 2],
+		['Int32LE', 4],
+		['Int32BE', 4],
+		['UInt8', 1],
+		['UInt16LE', 2],
+		['UInt16BE', 2],
+		['UInt32LE', 4],
+		['UInt32BE', 4],
+		['FloatLE', 4],
+		['FloatBE', 4],
+		['DoubleLE', 8],
+		['DoubleBE', 8],		
 	].forEach(m => {
 		var [methodName, len] = m;
-		this[methodName] = () => {
-			var res = this.buffer[methodName](pos);
+		
+		var readMethodName = 'read' + methodName;
+		this[readMethodName] = () => {
+			var res = this.buffer[readMethodName](pos);
 			pos = pos + len;
 			return res;
 		}
+		
+		var writeMethodName = 'write' + methodName;
+		this[writeMethodName] = (val) => {
+			pos = this.buffer[writeMethodName](val, pos);
+			return val;
+		};
 	});	
 	this.readByte = this.readUInt8;
 	this.readSByte = this.readInt8;	
-	
+	this.writeByte = this.writeUInt8;
+	this.writeSByte = this.writeInt8;
 	
 	// Read (sub) buffer 
 	this.read = function(numBytes) {
@@ -57,6 +70,10 @@ function StreamBuffer(buf) {
 		var res = _readString(length, encoding);	
 		pos = pos + (length == undefined ? Buffer.byteLength(res, encoding)+1 : length);
 		return res;
+	};
+	this.writeString = function(val, encoding) {
+		pos = pos + buf.write(val, pos, encoding);
+		return val;
 	};
 	this.peekString = function(length, encoding) {
 		var res = _readString(length, encoding);

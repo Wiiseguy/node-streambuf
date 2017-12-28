@@ -33,21 +33,21 @@ test('read string (known length)', t => {
 });
 
 test('read strings (mixed encodings)', t => {
-	 var buffer = Buffer.from([0x9a,0x03, 0x91,0x03, 0xa3,0x03, 0xa3,0x03, 0x95,0x03, 0, 0x68, 0x69, 0x21 ]); //'\u039a\u0391\u03a3\u03a3\u0395\u0000', 'ucs2');
-	 var sb = StreamBuffer(buffer);
+	var buffer = Buffer.from([0x9a,0x03, 0x91,0x03, 0xa3,0x03, 0xa3,0x03, 0x95,0x03, 0, 0x68, 0x69, 0x21 ]); 
+	var sb = StreamBuffer(buffer);
 	 
-	 t.is(sb.readString(null, 'ucs2'), 'ΚΑΣΣΕ');
-	 t.is(sb.tell(), 11);
-	 t.is(sb.readString(), 'hi!');
+	t.is(sb.readString(null, 'ucs2'), 'ΚΑΣΣΕ');
+	t.is(sb.tell(), 11);
+	t.is(sb.readString(), 'hi!');
 });
 
 test('read strings (multibyte utf8)', t => {
-	 var buffer = Buffer.from([0xF0, 0x9F, 0x98, 0x83,  0, 0x68, 0x69, 0x21 ]); //'\u039a\u0391\u03a3\u03a3\u0395\u0000', 'ucs2');
-	 var sb = StreamBuffer(buffer);
+	var buffer = Buffer.from([0xF0, 0x9F, 0x98, 0x83,  0, 0x68, 0x69, 0x21 ]); 
+	var sb = StreamBuffer(buffer);
 	 
-	 t.is(sb.readString(), '😃');
-	 t.is(sb.tell(), 5);
-	 t.is(sb.readString(), 'hi!');
+	t.is(sb.readString(), '😃');
+	t.is(sb.tell(), 5);
+	t.is(sb.readString(), 'hi!');
 });
  
 test('read unsigned integers', t => {
@@ -107,7 +107,27 @@ test('read signed integers', t => {
 
 }); 
 
-test('correct position increase (numeric methods)', t => {
+test('read floating point numbers', t => {
+    var buffer = Buffer.from([1, 2, 3, 4, 5, 6, 7, 8]);
+	var sb = StreamBuffer(buffer);
+	
+	t.is(sb.readFloatLE(), buffer.readFloatLE());
+	t.is(sb.readFloatLE(), buffer.readFloatLE(4));
+	sb.rewind();
+	
+	t.is(sb.readFloatBE(), buffer.readFloatBE());
+	t.is(sb.readFloatBE(), buffer.readFloatBE(4));
+	sb.rewind();
+	
+	t.is(sb.readDoubleLE(), buffer.readDoubleLE());
+	sb.rewind();
+	
+	t.is(sb.readDoubleBE(), buffer.readDoubleBE());
+	sb.rewind();
+	
+});
+
+test('correct position increase (numeric read methods)', t => {
 	var buffer = Buffer.from([0, 1, 2, 3, 4, 5, 6, 7]);
 	var sb = StreamBuffer(buffer);
 	
@@ -150,6 +170,73 @@ test('buffer access', t => {
 
 	t.true(error instanceof TypeError);
 	
+});
+
+test('write numbers', t => {
+	var buffer = Buffer.alloc(8);
+	var sb = StreamBuffer(buffer);
+	
+	sb.writeUInt8(1);
+	sb.writeUInt8(2);
+	sb.writeUInt8(3);
+	sb.writeUInt8(255);
+	sb.writeUInt32BE(0xaabbccdd);
+	
+	t.deepEqual(buffer, Buffer.from([1,2,3,255, 0xaa, 0xbb, 0xcc, 0xdd]));
+});
+
+test('write floating point numbers', t => {
+	var buffer = Buffer.alloc(8);
+	var sb = StreamBuffer(buffer);
+	
+	sb.writeFloatLE(123); // Why not test it with something like 123.4? Because it gets read back as 123.4000015258789
+	sb.writeFloatLE(456);
+	sb.rewind();	
+	
+	t.is(sb.readFloatLE(), 123);
+	t.is(sb.readFloatLE(), 456);
+	sb.rewind();
+	
+	sb.writeDoubleLE(58008.80085);
+	sb.rewind();	
+	
+	t.is(sb.readDoubleLE(), 58008.80085);
+});
+
+test('write strings', t => {
+	var buffer = Buffer.alloc(6);
+	var sb = StreamBuffer(buffer);
+	
+	sb.writeString('hel');
+	sb.writeString('lo');
+	t.is(sb.isEOF(), false);
+	t.deepEqual(buffer, Buffer.from([0x68, 0x65, 0x6c, 0x6c, 0x6f, 0]));
+});
+
+test('write multibyte utf8 strings', t => {
+	var buffer = Buffer.alloc(4);
+	var sb = StreamBuffer(buffer);
+	
+	sb.writeString('😃');
+	t.is(sb.tell(), 4);
+	t.is(sb.isEOF(), true);
+	
+	t.deepEqual(buffer, Buffer.from([0xF0, 0x9F, 0x98, 0x83]));
+});
+
+test('write mixed encoded strings', t => {
+	var buffer = Buffer.alloc(14);
+	var sb = StreamBuffer(buffer);
+	
+	sb.writeString('ΚΑΣΣΕ', 'ucs2');	
+	t.is(sb.tell(), 10);
+	sb.writeByte(0);
+	
+	sb.writeString('hi!');
+	sb.rewind();
+	
+	t.is(sb.readString(null, 'ucs2'), 'ΚΑΣΣΕ');
+	t.is(sb.readString(null, 'utf8'), 'hi!');	
 });
 
 
