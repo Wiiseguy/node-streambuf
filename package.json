@@ -4,7 +4,7 @@
   "description": "Streamed Buffers - .NET's BinaryReader facsimile",
   "main": "streambuf.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,8 @@
     "binaryreader"
   ],
   "author": "Wiiseguy",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "ava": "^0.24.0"
+  }
 }

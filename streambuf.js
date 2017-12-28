@@ -1,49 +1,50 @@
 function StreamBuffer(buf) {
+	if(!(buf instanceof Buffer)) {
+		throw new TypeError("Not a valid Buffer");
+	}
 	if(!(this instanceof StreamBuffer)) {
 		return new StreamBuffer(buf);
 	}
-	var pos = 0;
-	this.buffer = buf;
 	
+	var pos = 0;
+	
+	Object.defineProperty(this, "buffer", {
+		value: buf,
+		writable: false
+	});
+	
+	// Numeric methods
+	[
+		['readInt8', 1],
+		['readInt16LE', 2],
+		['readInt16BE', 2],
+		['readInt32LE', 4],
+		['readInt32BE', 4],
+		['readUInt8', 1],
+		['readUInt16LE', 2],
+		['readUInt16BE', 2],
+		['readUInt32LE', 4],
+		['readUInt32BE', 4]
+	].forEach(m => {
+		var [methodName, len] = m;
+		this[methodName] = () => {
+			var res = this.buffer[methodName](pos);
+			pos = pos + len;
+			return res;
+		}
+	});	
+	this.readByte = this.readUInt8;
+	this.readSByte = this.readInt8;	
+	
+	
+	// Read (sub) buffer 
 	this.read = function(numBytes) {
 		var res = buf.slice(pos, pos+numBytes);
 		pos = pos + numBytes;
 		return res;
 	};
-	this.readByte = this.readUInt8 = function() {
-		var res = buf.readUInt8(pos);
-		pos = pos + 1;
-		return res;
-	};
 	
-	//BE
-	this.readUInt16BE = function() {
-		var res = buf.readUInt16BE(pos);
-		pos = pos + 2;
-		return res;
-	};
-	this.readUInt32BE = function() {
-		var res = buf.readUInt32BE(pos);
-		pos = pos + 4;
-		return res;
-	};
-	
-	//LE
-	this.readInt16LE = function() {
-		var res = buf.readInt16LE(pos);
-		pos = pos + 2;
-		return res;
-	};
-	this.readUInt16LE = function() {
-		var res = buf.readUInt16LE(pos);
-		pos = pos + 2;
-		return res;
-	};
-	this.readUInt32LE = this.readUInt = function() {
-		var res = buf.readUInt32LE(pos);
-		pos = pos + 4;
-		return res;
-	};
+	// String methods
 	var _readString = function(length, encoding) {
 		if(length == undefined) {			
 			for(length = 0;;length++) {
@@ -54,18 +55,26 @@ function StreamBuffer(buf) {
 	};
 	this.readString = function(length, encoding) {
 		var res = _readString(length, encoding);	
-		pos = pos + (length == undefined ? res.length+1 : length);
+		pos = pos + (length == undefined ? Buffer.byteLength(res, encoding)+1 : length);
 		return res;
 	};
 	this.peekString = function(length, encoding) {
 		var res = _readString(length, encoding);
 		return res;
 	};
+	
+	// Cursor methods
 	this.skip = function(length) {
+		if(length == undefined) length = 1;
 		pos = pos + length;
 	};
 	this.setPos = this.seek = function(position) {
-		pos = position;
+		if(position != undefined) {
+			pos = position;
+		}
+	};
+	this.rewind = function() {
+		pos = 0;
 	};
 	this.getPos = this.tell = function() { return pos; };
 	this.isEOF = function() { return pos >= buf.length; };
