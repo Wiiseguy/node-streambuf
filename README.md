@@ -19,7 +19,7 @@ const StreamBuffer = require('streambuf');
 
 let buffer = new StreamBuffer(fs.readFileSync('hiscore.dat'));
 
-let nameLength = buffer.readUInt();
+let nameLength = buffer.readUInt32LE();
 let name = buffer.readString(nameLength);
 
 ```
