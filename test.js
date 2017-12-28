@@ -142,7 +142,11 @@ test('correct position increase (numeric read methods)', t => {
 		[sb.readUInt16LE, 2],
 		[sb.readUInt16BE, 2],
 		[sb.readUInt32LE, 4],
-		[sb.readUInt32BE, 4]
+		[sb.readUInt32BE, 4],
+		[sb.readFloatLE, 4],
+		[sb.readFloatBE, 4],
+		[sb.readDoubleLE, 8],
+		[sb.readDoubleBE, 8],
 	];
 	
 	methods.forEach(m => {
