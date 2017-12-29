@@ -67,12 +67,10 @@ function StreamBuffer(buf) {
 	
 	// Write 7bit encoded integer (like those used by .NET's BinaryWriter)
 	this.write7BitInt = function(val) {
-		while (val >= 0x80)
-		{
+		while (val >= 0x80) {
 			this.writeByte((val | 0x80) & 0xff); // set 8th to 1, keep only first the 8 bits
 			val >>= 7;
 		}
-
 		this.writeByte(val & 0x7f)
 	};
 	
