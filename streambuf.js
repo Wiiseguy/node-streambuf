@@ -1,6 +1,10 @@
 function StreamBuffer(buf) {
 	if(!(buf instanceof Buffer)) {
-		throw new TypeError("Not a valid Buffer");
+		if(buf instanceof StreamBuffer) {
+			return new StreamBuffer(buf.buffer);
+		} else {
+			throw new TypeError("Not a valid Buffer");
+		}
 	}
 	if(!(this instanceof StreamBuffer)) {
 		return new StreamBuffer(buf);
@@ -50,11 +54,33 @@ function StreamBuffer(buf) {
 	this.writeByte = this.writeUInt8;
 	this.writeSByte = this.writeInt8;
 	
+	// Read 7bit encoded integer (like those used by .NET's BinaryWriter)
+	this.read7BitInt = function() {
+		var byte=0, shift=0, num=0;
+		do {
+			byte = this.readByte();
+			num |= (byte & 0x7f) << shift;
+			shift += 7;
+		} while ((byte & 0x80) != 0);
+		return num;
+	};
+	
+	// Write 7bit encoded integer (like those used by .NET's BinaryWriter)
+	this.write7BitInt = function(val) {
+		while (val >= 0x80)
+		{
+			this.writeByte((val | 0x80) & 0xff); // set 8th to 1, keep only first the 8 bits
+			val >>= 7;
+		}
+
+		this.writeByte(val & 0x7f)
+	};
+	
 	// Read (sub) buffer 
 	this.read = function(numBytes) {
 		var res = buf.slice(pos, pos+numBytes);
 		pos = pos + numBytes;
-		return res;
+		return new StreamBuffer(res);
 	};
 	
 	// String methods
@@ -71,6 +97,10 @@ function StreamBuffer(buf) {
 		pos = pos + (length == undefined ? Buffer.byteLength(res, encoding)+1 : length);
 		return res;
 	};
+	this.readString7 = function() {
+		var len = this.read7BitInt();
+		return this.readString(len);
+	};
 	this.writeString = function(val, encoding) {
 		pos = pos + buf.write(val, pos, encoding);
 		return val;
@@ -81,9 +111,9 @@ function StreamBuffer(buf) {
 	};
 	
 	// Cursor methods
-	this.skip = function(length) {
-		if(length == undefined) length = 1;
-		pos = pos + length;
+	this.skip = function(numBytes) {
+		if(numBytes == undefined) numBytes = 1;
+		pos = pos + numBytes;
 	};
 	this.setPos = this.seek = function(position) {
 		if(position != undefined) {

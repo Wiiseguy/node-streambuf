@@ -1,14 +1,48 @@
 import test from 'ava';
 import StreamBuffer from '.'
 
-test('read unsigned integers', t => {
+test('initializers', t => {
+	var sb1 = new StreamBuffer(Buffer.from([1]));	
+	t.true(sb1 instanceof StreamBuffer);
+	
+	var sb2 = StreamBuffer(Buffer.from([2]));	
+	t.true(sb2 instanceof StreamBuffer);
+	
+	var buffer = Buffer.from([0,1]);
+	var sb3 = StreamBuffer(buffer);
+	var sb4 = StreamBuffer(sb3);
+	
+	t.false(sb3 == sb4);
+	t.true(sb3.buffer == sb4.buffer);
+});
+
+test('buffer access', t => {
+	var buffer = Buffer.from([0, 1, 2, 3, 4, 5, 6, 7]);
+	var sb = StreamBuffer(buffer);
+	
+	// The buffer isn't copied
+	t.is(sb.buffer, buffer);
+	
+	// The 'buffer' property should be read-only
+	const error = t.throws(() => {
+		sb.buffer = Buffer.from([1,2,3]);
+	});
+
+	t.true(error instanceof TypeError);
+	
+});
+
+test('read part of the buffer', t => {
     var buffer = Buffer.from([1,2,3,4,5,6,7,8]);
 	var sb = StreamBuffer(buffer);	
-
-	t.true(sb.read(2).equals(Buffer.from([1,2])) );
-	t.true(sb.read(1).equals(Buffer.from([3])) );
-	t.true(sb.read(4).equals(Buffer.from([4,5,6,7])) );
-	t.true(sb.read(2).equals(Buffer.from([8])) );	// read beyond the length
+	
+	var ssb = sb.read(3);
+	t.true(ssb instanceof StreamBuffer); // the read sub buffer should also be a StreamBuffer instance
+	ssb.seek(1);
+	t.is(ssb.readByte(), 2);
+	
+	t.true(sb.read(4).buffer.equals(Buffer.from([4,5,6,7])) );
+	t.true(sb.read(2).buffer.equals(Buffer.from([8])) );	// read beyond the length
 }); 
 
 test('read string (unknown length)', t => {
@@ -17,8 +51,7 @@ test('read string (unknown length)', t => {
 
 	t.is(sb.readString(), 'hello'); // read until a 0 is encountered
 	t.is(sb.tell(), 6);	// position should point to 0x68, the 0 should have been gobbled
-	t.is(sb.readString(), 'hi!');
-	
+	t.is(sb.readString(), 'hi!');	
 });
 
 test('read string (known length)', t => {
@@ -48,6 +81,15 @@ test('read strings (multibyte utf8)', t => {
 	t.is(sb.readString(), '😃');
 	t.is(sb.tell(), 5);
 	t.is(sb.readString(), 'hi!');
+});
+
+test('read strings prepended with a 7 bit encoded integer indicating their length', t => {
+	var buffer = Buffer.from([3, 0x68, 0x69, 0x21]);
+	var sb = StreamBuffer(buffer);
+	
+	t.is(sb.readString7(), 'hi!');
+	t.is(sb.tell(), 4);
+	t.true(sb.isEOF());
 });
  
 test('read unsigned integers', t => {
@@ -127,6 +169,17 @@ test('read floating point numbers', t => {
 	
 });
 
+test('read 7bit encoded ints (like those used by .NET)', t => {
+	var buffer = Buffer.from([2, 0x80,2, 0x80,0x80,2,  1|0x80, 2]);
+	var sb = StreamBuffer(buffer);
+	
+	t.is(sb.read7BitInt(), 2);
+	t.is(sb.read7BitInt(), 256); 	// 2 << 7
+	t.is(sb.read7BitInt(), 32768);	// 2 << 14
+	t.is(sb.read7BitInt(), 257);	// 1 + (2 << 7)
+});
+
+
 test('correct position increase (numeric read methods)', t => {
 	var buffer = Buffer.from([0, 1, 2, 3, 4, 5, 6, 7]);
 	var sb = StreamBuffer(buffer);
@@ -160,22 +213,6 @@ test('correct position increase (numeric read methods)', t => {
 	
 });
 
-test('buffer access', t => {
-	var buffer = Buffer.from([0, 1, 2, 3, 4, 5, 6, 7]);
-	var sb = StreamBuffer(buffer);
-	
-	// The buffer isn't copied
-	t.is(sb.buffer, buffer);
-	
-	// The 'buffer' property should be read-only
-	const error = t.throws(() => {
-		sb.buffer = Buffer.from([1,2,3]);
-	});
-
-	t.true(error instanceof TypeError);
-	
-});
-
 test('write numbers', t => {
 	var buffer = Buffer.alloc(8);
 	var sb = StreamBuffer(buffer);
@@ -205,6 +242,32 @@ test('write floating point numbers', t => {
 	sb.rewind();	
 	
 	t.is(sb.readDoubleLE(), 58008.80085);
+});
+
+test('write 7bit encoded ints (like those used by .NET)', t => {
+	var buffer = Buffer.alloc(8); 
+	var sb = StreamBuffer(buffer);
+	
+	sb.write7BitInt(2);
+	sb.write7BitInt(256);
+	sb.write7BitInt(32768);
+	sb.write7BitInt(257);
+	sb.rewind();
+	
+	t.is(sb.readByte(), 2);
+	t.is(sb.readByte(), 0x80);
+	t.is(sb.readByte(), 2);
+	t.is(sb.readByte(), 0x80);
+	t.is(sb.readByte(), 0x80);
+	t.is(sb.readByte(), 2);
+	t.is(sb.readByte(), 0x81);
+	t.is(sb.readByte(), 2);
+	sb.rewind();
+	
+	t.is(sb.read7BitInt(), 2);
+	t.is(sb.read7BitInt(), 256); 	// 2 << 7
+	t.is(sb.read7BitInt(), 32768);	// 2 << 14
+	t.is(sb.read7BitInt(), 257);	// 1 + (2 << 7)
 });
 
 test('write strings', t => {
@@ -243,6 +306,26 @@ test('write mixed encoded strings', t => {
 	t.is(sb.readString(null, 'utf8'), 'hi!');	
 });
 
+test('isEOF tests', t => {
+	var buffer = Buffer.from([0, 1, 2]);
+	var sb = StreamBuffer(buffer);
+	
+	t.is(sb.tell(), 0);
+	t.false(sb.isEOF());
+	
+	sb.readByte();
+	t.is(sb.tell(), 1);
+	t.false(sb.isEOF());
+	
+	sb.readByte();
+	t.is(sb.tell(), 2);
+	t.false(sb.isEOF());
+	
+	sb.readByte();
+	t.is(sb.tell(), 3);
+	t.true(sb.isEOF());
+	
+});
 
 // Abandoned for now. 64-bit ints do not offer the wanted precision
 // Math.pow(2, 63) yields 9223372036854776000, but is in fact 9223372036854775808
