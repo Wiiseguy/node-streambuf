@@ -1,4 +1,4 @@
-# node-streambuf
+# node-streambuf [![Build Status](https://travis-ci.org/Wiiseguy/node-streambuf.svg?branch=master)](https://travis-ci.org/Wiiseguy/node-streambuf)
 > Streamed Buffers - .NET's BinaryReader facsimile
 
 This library wraps most of [Buffer](https://nodejs.org/api/buffer.html)'s methods. 
