@@ -13,7 +13,13 @@
   "keywords": [
     "streams",
     "buffers",
-    "binaryreader"
+    "binaryreader",
+    "buffered",
+    "binary",
+    "streamed",
+    "buffer",
+    "reader",
+    "writer"
   ],
   "author": "Wiiseguy",
   "license": "MIT",
