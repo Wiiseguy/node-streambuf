@@ -1,5 +1,5 @@
-import test from 'ava';
-import StreamBuffer from '.'
+const test = require('ava');
+const StreamBuffer = require('./streambuf');
 
 test('initializers', t => {
 	var sb1 = new StreamBuffer(Buffer.from([1]));	
@@ -17,18 +17,31 @@ test('initializers', t => {
 });
 
 test('buffer access', t => {
+	var source = [0, 1, 2, 3, 4, 5, 6, 7];
+	var buffer = Buffer.from(source);
+	var sb = StreamBuffer(buffer);
+	
+	// The buffer isn't copied
+	t.is(sb.buffer, buffer);	
+	
+	// The 'buffer' property should be read-only	
+	sb.buffer = Buffer.from([1,2,3]);
+	
+	t.true(sb.buffer.equals(Buffer.from(source)));	
+});
+
+test('buffer access - strict', t => {
+	'use strict';
 	var buffer = Buffer.from([0, 1, 2, 3, 4, 5, 6, 7]);
 	var sb = StreamBuffer(buffer);
 	
 	// The buffer isn't copied
-	t.is(sb.buffer, buffer);
+	t.is(sb.buffer, buffer);	
 	
 	// The 'buffer' property should be read-only
 	const error = t.throws(() => {
 		sb.buffer = Buffer.from([1,2,3]);
-	});
-
-	t.true(error instanceof TypeError);
+	}, {instanceOf: TypeError});
 	
 });
 

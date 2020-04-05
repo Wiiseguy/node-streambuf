@@ -18,6 +18,6 @@
   "author": "Wiiseguy",
   "license": "MIT",
   "devDependencies": {
-    "ava": "^1.1.0"
+    "ava": "^3.6.0"
   }
 }
