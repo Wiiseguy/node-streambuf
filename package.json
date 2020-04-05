@@ -1,6 +1,6 @@
 {
   "name": "streambuf",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Streamed Buffers - .NET's BinaryReader facsimile",
   "main": "streambuf.js",
   "scripts": {
