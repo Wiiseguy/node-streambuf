@@ -80,6 +80,13 @@ function StreamBuffer(buf) {
 		pos = pos + numBytes;
 		return new StreamBuffer(res);
 	};
+	this.write = function(src) {
+		if(!(src instanceof Buffer)) {
+			throw new TypeError("Not a valid Buffer");
+		}
+		pos = pos + src.copy(buf, pos, 0);
+		return src;
+	};
 	
 	// String methods
 	var _readString = function(length, encoding) {

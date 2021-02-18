@@ -1,4 +1,4 @@
-const test = require('ava');
+const test = require('aqa');
 const StreamBuffer = require('./streambuf');
 
 test('initializers', t => {
@@ -39,7 +39,7 @@ test('buffer access - strict', t => {
 	t.is(sb.buffer, buffer);	
 	
 	// The 'buffer' property should be read-only
-	const error = t.throws(() => {
+	t.throws(() => {
 		sb.buffer = Buffer.from([1,2,3]);
 	}, {instanceOf: TypeError});
 	
@@ -57,6 +57,16 @@ test('read part of the buffer', t => {
 	t.true(sb.read(4).buffer.equals(Buffer.from([4,5,6,7])) );
 	t.true(sb.read(2).buffer.equals(Buffer.from([8])) );	// read beyond the length
 }); 
+
+test('write', t => {
+    var buffer = Buffer.from([0, 0, 0, 0]);
+	var sb = StreamBuffer(buffer);	
+	
+	sb.write(Buffer.from([1, 2]));
+	sb.write(Buffer.from([3, 4]));
+
+	t.true(sb.buffer.equals(Buffer.from([1, 2, 3, 4])));
+});
 
 test('read string (unknown length)', t => {
 	var buffer = Buffer.from([0x68, 0x65, 0x6c, 0x6c, 0x6f, 0, 0x68, 0x69, 0x21]); // h, e, l, l, o, (zero), h, i, !
@@ -236,7 +246,7 @@ test('write numbers', t => {
 	sb.writeUInt8(255);
 	sb.writeUInt32BE(0xaabbccdd);
 	
-	t.deepEqual(buffer, Buffer.from([1,2,3,255, 0xaa, 0xbb, 0xcc, 0xdd]));
+	t.true(buffer.equals(Buffer.from([1,2,3,255, 0xaa, 0xbb, 0xcc, 0xdd])));
 });
 
 test('write floating point numbers', t => {
@@ -290,7 +300,7 @@ test('write strings', t => {
 	sb.writeString('hel');
 	sb.writeString('lo');
 	t.is(sb.isEOF(), false);
-	t.deepEqual(buffer, Buffer.from([0x68, 0x65, 0x6c, 0x6c, 0x6f, 0]));
+	t.true(buffer.equals(Buffer.from([0x68, 0x65, 0x6c, 0x6c, 0x6f, 0])));
 });
 
 test('write multibyte utf8 strings', t => {
@@ -301,7 +311,7 @@ test('write multibyte utf8 strings', t => {
 	t.is(sb.tell(), 4);
 	t.is(sb.isEOF(), true);
 	
-	t.deepEqual(buffer, Buffer.from([0xF0, 0x9F, 0x98, 0x83]));
+	t.true(buffer.equals(Buffer.from([0xF0, 0x9F, 0x98, 0x83])));
 });
 
 test('write mixed encoded strings', t => {
