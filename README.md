@@ -52,6 +52,10 @@ Provides raw access to the underlying Buffer object (read-only)
 ---
 Returns a new StreamBuffer that references the same Buffer as the original, but cropped by offset and offset + numBytes.
 
+.write(buffer: Buffer)
+---
+Writes the contents of another Buffer.
+
 .readByte()
 ---
 Alias for .readUInt8()
