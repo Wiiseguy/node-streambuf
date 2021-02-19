@@ -1,8 +1,9 @@
-# node-streambuf [![Build Status](https://travis-ci.org/Wiiseguy/node-streambuf.svg?branch=master)](https://travis-ci.org/Wiiseguy/node-streambuf)
-> Streamed Buffers - .NET's BinaryReader facsimile
+# streambuf - Stream Buffers [![Build Status](https://travis-ci.org/Wiiseguy/node-streambuf.svg?branch=master)](https://travis-ci.org/Wiiseguy/node-streambuf)
+> Stream Buffers - .NET's BinaryReader facsimile for Node.js
 
-This library wraps most of [Buffer](https://nodejs.org/api/buffer.html)'s methods. 
-The difference with Buffer is that you don't have to specify an offset each read/write operation, it uses an internal cursor.
+This library wraps most of [Buffer](https://nodejs.org/api/buffer.html)'s methods. The difference with Buffer is that with streambuf you don't have to specify an offset each read/write operation, it uses an internal cursor. 
+
+This library offers an API that similar to C++'s [fstream/iostream/etc.](https://www.cplusplus.com/reference/iolibrary/) or .NET's [BinaryReader/BinaryWriter](https://docs.microsoft.com/en-us/dotnet/api/system.io).
 
 ## Install
 
