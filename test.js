@@ -356,6 +356,15 @@ test('write mixed encoded strings', t => {
 	t.is(sb.readString(null, 'utf8'), 'hi!');	
 });
 
+test('sbyte', t => {
+	var buffer = Buffer.alloc(1);
+	var sb = StreamBuffer(buffer);
+	
+	sb.writeByte(128)
+	sb.rewind();
+	t.is(sb.readSByte(), -128)
+});
+
 test('writeChar', t => {
 	var buffer = Buffer.alloc(2);
 	var sb = StreamBuffer(buffer);
