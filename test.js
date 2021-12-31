@@ -68,6 +68,27 @@ test('write', t => {
 	t.true(sb.buffer.equals(Buffer.from([1, 2, 3, 4])));
 });
 
+test('skip', t => {
+	var buffer = Buffer.from([0x68, 0x65, 0x6c, 0x6c, 0x6f]); // h, e, l, l, o
+	var sb = StreamBuffer(buffer);
+
+	sb.skip(1);
+	t.is(sb.readChar(), 'e');
+	sb.skip(2);
+	t.is(sb.readChar(), 'o');
+	sb.skip(20);
+	t.is(sb.readChar(), '');
+});
+
+test('skip - skip to before 0', t => {
+	var buffer = Buffer.from([0x68, 0x65, 0x6c, 0x6c, 0x6f]); // h, e, l, l, o
+	var sb = StreamBuffer(buffer);
+
+	sb.skip(-1);
+	t.is(sb.readString(5), 'hello');
+	
+});
+
 test('read string (unknown length)', t => {
 	var buffer = Buffer.from([0x68, 0x65, 0x6c, 0x6c, 0x6f, 0, 0x68, 0x69, 0x21]); // h, e, l, l, o, (zero), h, i, !
 	var sb = StreamBuffer(buffer);
@@ -106,13 +127,19 @@ test('read strings (multibyte utf8)', t => {
 	t.is(sb.readString(), 'hi!');
 });
 
-test('read strings prepended with a 7 bit encoded integer indicating their length', t => {
+test('readString7', t => {
 	var buffer = Buffer.from([3, 0x68, 0x69, 0x21]);
 	var sb = StreamBuffer(buffer);
 	
 	t.is(sb.readString7(), 'hi!');
-	t.is(sb.tell(), 4);
-	t.true(sb.isEOF());
+});
+
+test('writeString7', t => {
+	var buffer = Buffer.alloc(4);
+	var sb = StreamBuffer(buffer);
+	
+	sb.writeString7('hi!');
+	t.deepEqual(buffer, Buffer.from([3, 0x68, 0x69, 0x21]));
 });
  
 test('read unsigned integers', t => {
@@ -329,6 +356,23 @@ test('write mixed encoded strings', t => {
 	t.is(sb.readString(null, 'utf8'), 'hi!');	
 });
 
+test('writeChar', t => {
+	var buffer = Buffer.alloc(2);
+	var sb = StreamBuffer(buffer);
+	
+	sb.writeChar('h');
+	sb.writeChar('i');
+	t.deepEqual(buffer, Buffer.from([0x68, 0x69]));
+});
+
+test('writeChar - multibyte utf8 strings', t => {
+	var buffer = Buffer.alloc(4);
+	var sb = StreamBuffer(buffer);
+	
+	sb.writeChar('ë');
+	t.deepEqual(buffer, Buffer.from([0, 0, 0, 0]));
+});
+
 test('isEOF tests', t => {
 	var buffer = Buffer.from([0, 1, 2]);
 	var sb = StreamBuffer(buffer);
@@ -348,6 +392,28 @@ test('isEOF tests', t => {
 	t.is(sb.tell(), 3);
 	t.true(sb.isEOF());
 	
+});
+
+test('README example', t => {
+	var name1 = 'abc';
+	const hiscoreFile = Buffer.alloc(7);
+	const hiscoreFileSb = new StreamBuffer(hiscoreFile);
+	hiscoreFileSb.writeUInt32LE(name1.length);
+	hiscoreFileSb.writeString(name1);
+	
+	// README example start
+	var file = Buffer.from(hiscoreFile); // "Read" hiscore.dat
+	var buffer = StreamBuffer(file);	
+
+	let nameLength = buffer.readUInt32LE();
+	let name = buffer.readString(nameLength);
+
+	buffer.skip(-nameLength); // go back to the beginning of the name
+	buffer.writeString(name.toUpperCase()); // overwrite the name in the buffer with something else	
+	// README example end
+
+	t.is(hiscoreFile.toString('utf8', 4), 'abc') // original file
+	t.is(file.toString('utf8', 4), 'ABC') 
 });
 
 // Abandoned for now. 64-bit ints do not offer the wanted precision

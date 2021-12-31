@@ -4,7 +4,7 @@
   "description": "Streamed Buffers - .NET's BinaryReader facsimile",
   "main": "streambuf.js",
   "scripts": {
-    "test": "node test"
+    "test": "aqa"
   },
   "repository": {
     "type": "git",
@@ -35,7 +35,6 @@
   "author": "Wiiseguy",
   "license": "MIT",
   "devDependencies": {
-    "aqa": "^0.1.2"
-  },
-  "dependencies": {}
+    "aqa": "^1.2.14"
+  }
 }

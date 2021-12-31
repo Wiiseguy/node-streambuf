@@ -102,13 +102,25 @@ function StreamBuffer(buf) {
 		pos = pos + (length == undefined ? Buffer.byteLength(res, encoding)+1 : length);
 		return res;
 	};
-	this.readString7 = function() {
+	this.readChar = function(encoding) {
+		return this.readString(1, encoding);
+	};
+	this.readString7 = function(encoding) {
 		var len = this.read7BitInt();
-		return this.readString(len);
+		return this.readString(len, encoding);
 	};
 	this.writeString = function(val, encoding) {
 		pos = pos + buf.write(val, pos, encoding);
 		return val;
+	};
+	this.writeChar = function(val, encoding) {
+		pos = pos + buf.write(val, pos, 1, encoding);
+		return val;
+	};
+	this.writeString7 = function(val, encoding) {
+		var len = Buffer.byteLength(val, encoding);
+		this.write7BitInt(len);
+		return this.writeString(val, encoding);
 	};
 	this.peekString = function(length, encoding) {
 		var res = _readString(length, encoding);
@@ -119,11 +131,13 @@ function StreamBuffer(buf) {
 	this.skip = function(numBytes) {
 		if(numBytes == undefined) numBytes = 1;
 		pos = pos + numBytes;
+		if(pos < 0) pos = 0;
 	};
 	this.setPos = this.seek = function(position) {
 		if(position != undefined) {
 			pos = position;
 		}
+		if(pos < 0) pos = 0;
 	};
 	this.rewind = function() {
 		pos = 0;

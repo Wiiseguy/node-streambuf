@@ -1,4 +1,4 @@
-# streambuf - Stream Buffers [![Build Status](https://travis-ci.org/Wiiseguy/node-streambuf.svg?branch=master)](https://travis-ci.org/Wiiseguy/node-streambuf)
+# streambuf - Stream Buffers [![Node.js CI](https://github.com/Wiiseguy/node-streambuf/actions/workflows/node.js.yml/badge.svg)](https://github.com/Wiiseguy/node-streambuf/actions/workflows/node.js.yml)
 > Stream Buffers - .NET's BinaryReader facsimile for Node.js
 
 This library wraps most of [Buffer](https://nodejs.org/api/buffer.html)'s methods. The difference with Buffer is that with streambuf you don't have to specify an offset each read/write operation, it uses an internal cursor. 
@@ -23,7 +23,7 @@ let buffer = StreamBuffer(fs.readFileSync('hiscore.dat'));
 let nameLength = buffer.readUInt32LE();
 let name = buffer.readString(nameLength);
 
-buffer.seek(4); // go back to the beginning of the name
+buffer.skip(-nameLength); // go back to the beginning of the name
 buffer.writeString(name.toUpperCase()); // overwrite the name in the buffer with something else
 
 ```
@@ -81,6 +81,16 @@ Reads a 7 bit encoded integer, like those used by [.NET](https://msdn.microsoft.
 ---
 Writes a 7 bit encoded integer, like those used by [.NET](https://msdn.microsoft.com/en-us/library/system.io.binarywriter.write7bitencodedint(v=vs.110).aspx)
 
+.readChar([encoding])
+---
+Reads a single character from the buffer according to the specified character encoding.
+'encoding' defaults to utf8.
+
+.writeChar([encoding])
+---
+Writes a single character to the buffer according to the specified character encoding. Multi-byte characters are not written - use `writeString` for that instead.
+'encoding' defaults to utf8.
+
 .readString([length, [encoding]])
 ---
 Decodes to a string according to the specified character encoding in encoding and length.
@@ -91,18 +101,22 @@ Decodes to a string according to the specified character encoding in encoding an
 ---
 Functions the same way as .readString(), but does not update the offset.
 
-.readString7([encoding])
----
-A specialized version of readString(), it first reads a 7 bit encoded integer and uses that as the length of the to be read string. Can be used to read strings written by .NET's BinaryWriter.
-
 .writeString(str, [encoding])
 ---
 Writes a string to the underlying buffer with the specified encoding.
 'encoding' defaults to utf8.
 
+.readString7([encoding])
+---
+A specialized version of readString(), it first reads a 7 bit encoded integer and uses that as the length of the to be read string. Can be used to read strings written by .NET's BinaryWriter.
+
+.writeString7([encoding])
+---
+A specialized version of writeString(), it first writes a 7 bit encoded integer representing the length of the string, followed by the string. 
+
 .skip(numBytes)
 ---
-Skips the specified number of bytes.
+Skips the specified number of bytes. A negative number can be used to rewind.
 
 .setPos(pos) / .seek(pos)
 ---
