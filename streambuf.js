@@ -32,7 +32,11 @@ function StreamBuffer(buf) {
 		['FloatLE', 4],
 		['FloatBE', 4],
 		['DoubleLE', 8],
-		['DoubleBE', 8],		
+		['DoubleBE', 8],
+		['BigInt64LE', 8],
+		['BigInt64BE', 8],
+		['BigUInt64LE', 8],
+		['BigUInt64BE', 8],
 	].forEach(m => {
 		var [methodName, len] = m;
 		
