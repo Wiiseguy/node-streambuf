@@ -5,7 +5,7 @@ This library wraps most of [Buffer](https://nodejs.org/api/buffer.html)'s method
 
 `streambuf` offers a low-level API that similar to C++'s [fstream/iostream/etc.](https://www.cplusplus.com/reference/iolibrary/) or .NET's [BinaryReader/BinaryWriter](https://docs.microsoft.com/en-us/dotnet/api/system.io).
 
-If you're looking for a library that is more high-level and built on top of `streambuf`, try [node-structor](./node-structor).
+If you're looking for a library that is more high-level and built on top of `streambuf`, check out [node-structor](https://github.com/Wiiseguy/node-structor).
 
 ## Install
 
