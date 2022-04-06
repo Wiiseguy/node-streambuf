@@ -3,7 +3,9 @@
 
 This library wraps most of [Buffer](https://nodejs.org/api/buffer.html)'s methods. The difference with Buffer is that with streambuf you don't have to specify an offset each read/write operation, it uses an internal cursor. 
 
-This library offers an API that similar to C++'s [fstream/iostream/etc.](https://www.cplusplus.com/reference/iolibrary/) or .NET's [BinaryReader/BinaryWriter](https://docs.microsoft.com/en-us/dotnet/api/system.io).
+`streambuf` offers a low-level API that similar to C++'s [fstream/iostream/etc.](https://www.cplusplus.com/reference/iolibrary/) or .NET's [BinaryReader/BinaryWriter](https://docs.microsoft.com/en-us/dotnet/api/system.io).
+
+If you're looking for a library that is more high-level and built on top of `streambuf`, try [node-structor](./node-structor).
 
 ## Install
 
@@ -44,6 +46,11 @@ StreamBuffer numeric methods
 ---
 readInt8, readInt16LE, readInt16BE, readInt32LE, readInt32BE, readUInt8, readUInt16LE, readUInt16BE, readUInt32LE, readUInt32BE, readFloatLE, readFloatBE, readDoubleLE, readDoubleBE
 writeInt8, writeInt16LE, writeInt16BE, writeInt32LE, writeInt32BE, writeUInt8, writeUInt16LE, writeUInt16BE, writeUInt32LE, writeUInt32BE, writeFloatLE, writeFloatBE, writeDoubleLE, writeDoubleBE
+
+StreamBuffer BigInt methods
+---
+readBigInt64LE, readBigInt64BE, readBigUInt64LE, readBigUInt64BE,
+writeBigInt64LE, writeBigInt64BE, writeBigUInt64LE, writeBigUInt64BE
 
 .buffer
 ---
