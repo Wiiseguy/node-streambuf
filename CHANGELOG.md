@@ -1,6 +1,6 @@
 # **streambuf** Changelog
 
-### [1.2.0 - 1.2.1] (16-aug-2022)
+### [1.2.0 - 1.2.2] (16-aug-2022)
 - TypeScript rewrite
 - Added CHANGELOG
 
