@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "description": "Streamed Buffers - .NET's BinaryReader facsimile",
   "main": "./lib/streambuf.js",
-  "types": "./lib/streambuf.d.ts",
+  "types": "./index.d.ts",
   "scripts": {
     "test": "aqa",
     "test:watch": "aqa --watch"
