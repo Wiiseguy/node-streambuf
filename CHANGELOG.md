@@ -2,6 +2,7 @@
 
 ### [1.2.0 - 1.2.2] (16-aug-2022)
 - TypeScript rewrite
+- Major performance improvements for numeric read and write methods
 - Added CHANGELOG
 
 ### [1.1.4] (01-jan-2022)
