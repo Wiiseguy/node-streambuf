@@ -1,4 +1,4 @@
-# streambuf - Stream Buffers [![Node.js CI](https://github.com/Wiiseguy/node-streambuf/actions/workflows/node.js.yml/badge.svg)](https://github.com/Wiiseguy/node-streambuf/actions/workflows/node.js.yml)
+# streambuf - Stream Buffers ![npm](https://img.shields.io/npm/v/streambuf) [![Node.js CI](https://github.com/Wiiseguy/node-streambuf/actions/workflows/node.js.yml/badge.svg)](https://github.com/Wiiseguy/node-streambuf/actions/workflows/node.js.yml)
 > Stream Buffers - .NET's BinaryReader facsimile for Node.js
 
 This library wraps most of [Buffer](https://nodejs.org/api/buffer.html)'s methods. The difference with Buffer is that with streambuf you don't have to specify an offset each read/write operation, it uses an internal cursor. 
