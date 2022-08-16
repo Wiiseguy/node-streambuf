@@ -1,6 +1,6 @@
 # **streambuf** Changelog
 
-### [1.2.0] (TBD)
+### [1.2.0] (16-aug-2022)
 - TypeScript rewrite
 - Added CHANGELOG
 
