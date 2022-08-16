@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "outDir": "./lib",
+        "allowJs": true,
+        "checkJs": true,
+        "target": "ESNext",
+        "allowUnusedLabels": false,
+        "allowUnreachableCode": false,
+        "declaration": true,
+        "sourceMap": true,
+        "noUnusedParameters": true,
+        "module": "commonjs",
+        "resolveJsonModule": true,
+        "lib": [
+            "ESNext"
+        ]
+    },
+    "include": [
+        "**/*.ts"
+    ],
+}

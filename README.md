@@ -20,7 +20,7 @@ $ npm install streambuf
 const fs = require('fs');
 const StreamBuffer = require('streambuf');
 
-let buffer = StreamBuffer(fs.readFileSync('hiscore.dat'));
+let buffer = StreamBuffer.from(fs.readFileSync('hiscore.dat'));
 
 let nameLength = buffer.readUInt32LE();
 let name = buffer.readString(nameLength);

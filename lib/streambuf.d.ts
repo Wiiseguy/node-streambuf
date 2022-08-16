@@ -1,0 +1,73 @@
+/// <reference types="node" />
+interface StreamBufferConstructor {
+    new (buf: Buffer | StreamBuffer): StreamBuffer;
+    /** @deprecated Use `new StreamBuffer()` or `StreamBuffer.from()` */
+    (buf: Buffer | StreamBuffer): StreamBuffer;
+    from(buf: Buffer | StreamBuffer): StreamBuffer;
+}
+declare class StreamBuffer {
+    #private;
+    get buffer(): Buffer;
+    constructor(buffer: Buffer | StreamBuffer);
+    static from(buffer: Buffer | StreamBuffer): StreamBuffer;
+    readInt8(): number;
+    readInt16LE(): number;
+    readInt16BE(): number;
+    readInt32LE(): number;
+    readInt32BE(): number;
+    readUInt8(): number;
+    readUInt16LE(): number;
+    readUInt16BE(): number;
+    readUInt32LE(): number;
+    readUInt32BE(): number;
+    readFloatLE(): number;
+    readFloatBE(): number;
+    readDoubleLE(): number;
+    readDoubleBE(): number;
+    readBigInt64LE(): bigint;
+    readBigInt64BE(): bigint;
+    readBigUInt64LE(): bigint;
+    readBigUInt64BE(): bigint;
+    readByte(): number;
+    readSByte(): number;
+    writeInt8(value: number): number;
+    writeInt16LE(value: number): number;
+    writeInt16BE(value: number): number;
+    writeInt32LE(value: number): number;
+    writeInt32BE(value: number): number;
+    writeUInt8(value: number): number;
+    writeUInt16LE(value: number): number;
+    writeUInt16BE(value: number): number;
+    writeUInt32LE(value: number): number;
+    writeUInt32BE(value: number): number;
+    writeFloatLE(value: number): number;
+    writeFloatBE(value: number): number;
+    writeDoubleLE(value: number): number;
+    writeDoubleBE(value: number): number;
+    writeBigInt64LE(value: bigint): bigint;
+    writeBigInt64BE(value: bigint): bigint;
+    writeBigUInt64LE(value: bigint): bigint;
+    writeBigUInt64BE(value: bigint): bigint;
+    writeByte(val: number): number;
+    writeSByte(val: number): number;
+    read7BitInt(): number;
+    write7BitInt(val: any): void;
+    read(numBytes: any): StreamBuffer;
+    write(src: any): Buffer;
+    readString(length?: number, encoding?: BufferEncoding): string;
+    readChar(encoding?: BufferEncoding): string;
+    readString7(encoding?: BufferEncoding): string;
+    writeString(val: string, encoding?: BufferEncoding): string;
+    writeChar(val: string, encoding?: BufferEncoding): string;
+    writeString7(val: string, encoding?: BufferEncoding): string;
+    peekString(length: any, encoding?: BufferEncoding): string;
+    skip(numBytes: any): void;
+    setPos(position: any): void;
+    seek(position: any): void;
+    rewind(): void;
+    getPos(): number;
+    tell(): number;
+    isEOF(): boolean;
+}
+declare const StreamBufferWrapper: StreamBufferConstructor;
+export default StreamBufferWrapper;
