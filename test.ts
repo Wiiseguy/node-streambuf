@@ -12,6 +12,9 @@ test('initializers', t => {
 	const sb3 = StreamBuffer.from(Buffer.from([1]));
 	t.true(sb3 instanceof StreamBuffer);
 
+	/** @ts-ignore Intentional wrong param */
+	t.throws(_ => new StreamBuffer('hello'), { instanceOf: TypeError });
+
 	const buffer = Buffer.from([0, 1]);
 	const sb4 = new StreamBuffer(buffer);
 	const sb5 = new StreamBuffer(sb4);
@@ -70,15 +73,63 @@ test('write', t => {
 	t.true(sb.buffer.equals(Buffer.from([1, 2, 3, 4])));
 });
 
+test('write - invalid', t => {
+	const buffer = Buffer.from([0, 0, 0, 0]);
+	const sb = new StreamBuffer(buffer);
+
+	t.throws(_ => sb.write('hello'), { instanceOf: TypeError });
+});
+
+test('seek / setPos', t => {
+	const buffer = Buffer.from([0x68, 0x65, 0x6c, 0x6c, 0x6f]); // h, e, l, l, o
+	const sb = new StreamBuffer(buffer);
+
+	sb.seek(1);
+	t.is(sb.tell(), 1)
+
+	sb.setPos(1);
+	t.is(sb.tell(), 1)
+
+	/** @ts-ignore Intentional */
+	sb.setPos();
+	t.is(sb.tell(), 1)
+
+	sb.seek(-1);
+	t.is(sb.tell(), 0)
+
+	sb.seek(1000);
+	t.is(sb.tell(), 5)
+	t.is(sb.isEOF(), true);
+});
+
 test('skip', t => {
 	const buffer = Buffer.from([0x68, 0x65, 0x6c, 0x6c, 0x6f]); // h, e, l, l, o
 	const sb = new StreamBuffer(buffer);
 
+	t.is(sb.tell(), 0)
 	sb.skip(1);
+	t.is(sb.tell(), 1)
 	t.is(sb.readChar(), 'e');
+	t.is(sb.tell(), 2)
+
+	sb.skip();
+	t.is(sb.tell(), 3)
+	t.is(sb.readChar(), 'l');
+	t.is(sb.tell(), 4)
+
+	sb.skip(-1);
+	t.is(sb.tell(), 3)
+	t.is(sb.readChar(), 'l');
+	t.is(sb.tell(), 4)
+	sb.skip(-2);
+	t.is(sb.tell(), 2)
+
 	sb.skip(2);
+	t.is(sb.tell(), 4)
 	t.is(sb.readChar(), 'o');
+
 	sb.skip(20);
+	t.is(sb.tell(), 5)
 	t.is(sb.readChar(), '');
 });
 
@@ -127,6 +178,14 @@ test('read strings (multibyte utf8)', t => {
 	t.is(sb.readString(), '😃');
 	t.is(sb.tell(), 5);
 	t.is(sb.readString(), 'hi!');
+});
+
+test('peek string (unknown length)', t => {
+	const buffer = Buffer.from([0x68, 0x65, 0x6c, 0x6c, 0x6f, 0, 0x68, 0x69, 0x21]); // h, e, l, l, o, (zero), h, i, !
+	const sb = new StreamBuffer(buffer);
+
+	t.is(sb.peekString(), 'hello'); // read until a 0 is encountered
+	t.is(sb.tell(), 0);	// position should still be 0, as peekString doesn't move the pointer
 });
 
 test('readString7', t => {

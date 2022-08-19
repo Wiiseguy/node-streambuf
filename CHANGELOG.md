@@ -1,5 +1,9 @@
 # **streambuf** Changelog
 
+### [1.2.3] (TBD)
+- Code test coverage increased to 100%
+- Boundary checks for `setPos`/`seek` and `skip`
+
 ### [1.2.0 - 1.2.2] (16-aug-2022)
 - TypeScript rewrite
 - Major performance improvements for numeric read and write methods

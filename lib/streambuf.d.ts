@@ -60,9 +60,9 @@ declare class StreamBuffer {
     writeString(val: string, encoding?: BufferEncoding): string;
     writeChar(val: string, encoding?: BufferEncoding): string;
     writeString7(val: string, encoding?: BufferEncoding): string;
-    peekString(length: any, encoding?: BufferEncoding): string;
-    skip(numBytes: any): void;
-    setPos(position: any): void;
+    peekString(length?: number, encoding?: BufferEncoding): string;
+    skip(numBytes?: number): void;
+    setPos(position: number): void;
     seek(position: any): void;
     rewind(): void;
     getPos(): number;

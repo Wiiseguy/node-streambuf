@@ -227,21 +227,22 @@ class StreamBuffer {
         this.write7BitInt(len);
         return this.writeString(val, encoding);
     }
-    peekString(length, encoding?: BufferEncoding) {
+    peekString(length?: number, encoding?: BufferEncoding) {
         return this.#readString(length, encoding);
     }
 
     // Cursor methods
-    skip(numBytes) {
+    skip(numBytes?: number) {
         if (numBytes == undefined) numBytes = 1;
         this.#pos = this.#pos + numBytes;
         if (this.#pos < 0) this.#pos = 0;
+        if (this.#pos >= this.#buf.length) this.#pos = this.#buf.length;
     }
-    setPos(position) {
-        if (position != undefined) {
-            this.#pos = position;
-        }
+    setPos(position: number) {
+        if (position == undefined) return;
+        this.#pos = position;
         if (this.#pos < 0) this.#pos = 0;
+        if (this.#pos >= this.#buf.length) this.#pos = this.#buf.length;
     }
     seek(position) {
         return this.setPos(position);
