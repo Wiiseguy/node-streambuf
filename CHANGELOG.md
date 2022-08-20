@@ -1,6 +1,6 @@
 # **streambuf** Changelog
 
-### [1.2.3] (TBD)
+### [1.2.3] (20-aug-2022)
 - Code test coverage increased to 100%
 - Boundary checks for `setPos`/`seek` and `skip`
 
