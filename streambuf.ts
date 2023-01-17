@@ -171,7 +171,7 @@ class StreamBuffer {
     }
 
     // Write 7bit encoded integer (like those used by .NET's BinaryWriter)
-    write7BitInt(val) {
+    write7BitInt(val: number) {
         while (val >= 0x80) {
             this.writeByte((val | 0x80) & 0xff); // set 8th to 1, keep only the first 8 bits
             val >>= 7;
@@ -180,12 +180,12 @@ class StreamBuffer {
     }
 
     // Read (sub) buffer 
-    read(numBytes) {
+    read(numBytes: number) {
         const res = this.#buf.slice(this.#pos, this.#pos + numBytes);
         this.#pos = this.#pos + numBytes;
         return new StreamBuffer(res);
     }
-    write(src) {
+    write(src: Buffer) {
         if (!(src instanceof Buffer)) {
             throw new TypeError("Not a valid Buffer");
         }
@@ -244,8 +244,8 @@ class StreamBuffer {
         if (this.#pos < 0) this.#pos = 0;
         if (this.#pos >= this.#buf.length) this.#pos = this.#buf.length;
     }
-    seek(position) {
-        return this.setPos(position);
+    seek(position: number) {
+        this.setPos(position);
     }
     rewind() {
         this.#pos = 0;
