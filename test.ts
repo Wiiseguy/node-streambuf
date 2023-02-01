@@ -1,4 +1,4 @@
-import test = require('aqa');
+import * as test from 'aqa';
 import StreamBuffer from './streambuf';
 
 test('initializers', t => {
@@ -76,7 +76,10 @@ test('write - invalid', t => {
     const buffer = Buffer.from([0, 0, 0, 0]);
     const sb = new StreamBuffer(buffer);
 
-    t.throws(_ => sb.write('hello'), { instanceOf: TypeError });
+    t.throws(_ =>
+        /** @ts-ignore Intentional */
+        sb.write('hello'),
+        { instanceOf: TypeError });
 });
 
 test('seek / setPos', t => {

@@ -51,9 +51,9 @@ declare class StreamBuffer {
     writeByte(val: number): number;
     writeSByte(val: number): number;
     read7BitInt(): number;
-    write7BitInt(val: any): void;
-    read(numBytes: any): StreamBuffer;
-    write(src: any): Buffer;
+    write7BitInt(val: number): void;
+    read(numBytes: number): StreamBuffer;
+    write(src: Buffer): Buffer;
     readString(length?: number, encoding?: BufferEncoding): string;
     readChar(encoding?: BufferEncoding): string;
     readString7(encoding?: BufferEncoding): string;
@@ -63,7 +63,7 @@ declare class StreamBuffer {
     peekString(length?: number, encoding?: BufferEncoding): string;
     skip(numBytes?: number): void;
     setPos(position: number): void;
-    seek(position: any): void;
+    seek(position: number): void;
     rewind(): void;
     getPos(): number;
     tell(): number;

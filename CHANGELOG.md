@@ -1,5 +1,8 @@
 # **streambuf** Changelog
 
+### [1.2.4] (TBD)
+- Added extra TS param typings
+
 ### [1.2.3] (20-aug-2022)
 - Code test coverage increased to 100%
 - Boundary checks for `setPos`/`seek` and `skip`
