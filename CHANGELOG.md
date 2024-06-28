@@ -2,6 +2,9 @@
 
 ### [1.2.4] (TBD)
 - Added extra TS param typings
+- Added some more tests + mechanism to check if every numeric and write method is tested for length
+- Added .prettierrc
+- Refactored deprecated Buffer method `slice` to `subarray`
 
 ### [1.2.3] (20-aug-2022)
 - Code test coverage increased to 100%

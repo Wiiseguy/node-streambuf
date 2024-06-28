@@ -5,7 +5,7 @@ test('initializers', t => {
     const sb1 = new StreamBuffer(Buffer.from([1]));
     t.true(sb1 instanceof StreamBuffer);
 
-    // Deprecated, but should still work for backwards compatibility
+    /** @ts-ignore Deprecated, but should still work for backwards compatibility  */
     const sb2 = StreamBuffer(Buffer.from([1]));
     t.true(sb2 instanceof StreamBuffer);
 
@@ -31,8 +31,9 @@ test('buffer access', t => {
     // The buffer isn't copied
     t.is(sb.buffer, buffer);
 
-    // @ts-ignore The 'buffer' property should be read-only	
-    let e = t.throws(_ => sb.buffer = Buffer.from([1, 2, 3]));
+    // @ts-ignore The 'buffer' property should be read-only
+    let e = t.throws(_ => (sb.buffer = Buffer.from([1, 2, 3])));
+    t.true(e instanceof TypeError);
 
     t.true(sb.buffer.equals(Buffer.from(source)));
 });
@@ -46,7 +47,9 @@ test('buffer access - strict', t => {
     t.is(sb.buffer, buffer);
 
     // @ts-ignore The 'buffer' property should be read-only
-    t.throws(() => sb.buffer = Buffer.from([1, 2, 3]), { instanceOf: TypeError });
+    t.throws(() => (sb.buffer = Buffer.from([1, 2, 3])), {
+        instanceOf: TypeError
+    });
 });
 
 test('read part of the buffer', t => {
@@ -59,7 +62,7 @@ test('read part of the buffer', t => {
     t.is(ssb.readByte(), 2);
 
     t.true(sb.read(4).buffer.equals(Buffer.from([4, 5, 6, 7])));
-    t.true(sb.read(2).buffer.equals(Buffer.from([8])));	// read beyond the length
+    t.true(sb.read(2).buffer.equals(Buffer.from([8]))); // read beyond the length
 });
 
 test('write', t => {
@@ -76,10 +79,12 @@ test('write - invalid', t => {
     const buffer = Buffer.from([0, 0, 0, 0]);
     const sb = new StreamBuffer(buffer);
 
-    t.throws(_ =>
-        /** @ts-ignore Intentional */
-        sb.write('hello'),
-        { instanceOf: TypeError });
+    t.throws(
+        _ =>
+            /** @ts-ignore Intentional */
+            sb.write('hello'),
+        { instanceOf: TypeError }
+    );
 });
 
 test('seek / setPos', t => {
@@ -87,20 +92,20 @@ test('seek / setPos', t => {
     const sb = new StreamBuffer(buffer);
 
     sb.seek(1);
-    t.is(sb.tell(), 1)
+    t.is(sb.tell(), 1);
 
     sb.setPos(1);
-    t.is(sb.tell(), 1)
+    t.is(sb.tell(), 1);
 
     /** @ts-ignore Intentional */
     sb.setPos();
-    t.is(sb.tell(), 1)
+    t.is(sb.tell(), 1);
 
     sb.seek(-1);
-    t.is(sb.tell(), 0)
+    t.is(sb.tell(), 0);
 
     sb.seek(1000);
-    t.is(sb.tell(), 5)
+    t.is(sb.tell(), 5);
     t.is(sb.isEOF(), true);
 });
 
@@ -108,30 +113,30 @@ test('skip', t => {
     const buffer = Buffer.from([0x68, 0x65, 0x6c, 0x6c, 0x6f]); // h, e, l, l, o
     const sb = new StreamBuffer(buffer);
 
-    t.is(sb.tell(), 0)
+    t.is(sb.tell(), 0);
     sb.skip(1);
-    t.is(sb.tell(), 1)
+    t.is(sb.tell(), 1);
     t.is(sb.readChar(), 'e');
-    t.is(sb.tell(), 2)
+    t.is(sb.tell(), 2);
 
     sb.skip();
-    t.is(sb.tell(), 3)
+    t.is(sb.tell(), 3);
     t.is(sb.readChar(), 'l');
-    t.is(sb.tell(), 4)
+    t.is(sb.tell(), 4);
 
     sb.skip(-1);
-    t.is(sb.tell(), 3)
+    t.is(sb.tell(), 3);
     t.is(sb.readChar(), 'l');
-    t.is(sb.tell(), 4)
+    t.is(sb.tell(), 4);
     sb.skip(-2);
-    t.is(sb.tell(), 2)
+    t.is(sb.tell(), 2);
 
     sb.skip(2);
-    t.is(sb.tell(), 4)
+    t.is(sb.tell(), 4);
     t.is(sb.readChar(), 'o');
 
     sb.skip(20);
-    t.is(sb.tell(), 5)
+    t.is(sb.tell(), 5);
     t.is(sb.readChar(), '');
 });
 
@@ -141,7 +146,6 @@ test('skip - skip to before 0', t => {
 
     sb.skip(-1);
     t.is(sb.readString(5), 'hello');
-
 });
 
 test('read string (unknown length)', t => {
@@ -149,7 +153,7 @@ test('read string (unknown length)', t => {
     const sb = new StreamBuffer(buffer);
 
     t.is(sb.readString(), 'hello'); // read until a 0 is encountered
-    t.is(sb.tell(), 6);	// position should point to 0x68, the 0 should have been gobbled
+    t.is(sb.tell(), 6); // position should point to 0x68, the 0 should have been gobbled
     t.is(sb.readString(), 'hi!');
 });
 
@@ -158,7 +162,7 @@ test('read string (known length)', t => {
     const sb = new StreamBuffer(buffer);
 
     t.is(sb.readString(5), 'hello');
-    t.is(sb.tell(), 5);	// position should point to the 0 entry
+    t.is(sb.tell(), 5); // position should point to the 0 entry
     sb.skip(1);
     t.is(sb.readString(2), 'hi');
 });
@@ -173,7 +177,7 @@ test('read strings (mixed encodings)', t => {
 });
 
 test('read strings (multibyte utf8)', t => {
-    const buffer = Buffer.from([0xF0, 0x9F, 0x98, 0x83, 0, 0x68, 0x69, 0x21]);
+    const buffer = Buffer.from([0xf0, 0x9f, 0x98, 0x83, 0, 0x68, 0x69, 0x21]);
     const sb = new StreamBuffer(buffer);
 
     t.is(sb.readString(), '😃');
@@ -186,7 +190,7 @@ test('peek string (unknown length)', t => {
     const sb = new StreamBuffer(buffer);
 
     t.is(sb.peekString(), 'hello'); // read until a 0 is encountered
-    t.is(sb.tell(), 0);	// position should still be 0, as peekString doesn't move the pointer
+    t.is(sb.tell(), 0); // position should still be 0, as peekString doesn't move the pointer
 });
 
 test('readString7', t => {
@@ -258,7 +262,6 @@ test('read signed integers', t => {
 
     t.is(sb.readInt32BE(), buffer.readInt32BE());
     sb.rewind();
-
 });
 
 test('read floating point numbers', t => {
@@ -285,15 +288,24 @@ test('read 7bit encoded ints (like those used by .NET)', t => {
     const sb = new StreamBuffer(buffer);
 
     t.is(sb.read7BitInt(), 2);
-    t.is(sb.read7BitInt(), 256); 	// 2 << 7
-    t.is(sb.read7BitInt(), 32768);	// 2 << 14
-    t.is(sb.read7BitInt(), 257);	// 1 + (2 << 7)
+    t.is(sb.read7BitInt(), 256); // 2 << 7
+    t.is(sb.read7BitInt(), 32768); // 2 << 14
+    t.is(sb.read7BitInt(), 257); // 1 + (2 << 7)
 });
-
 
 test('correct position increase (numeric read methods)', t => {
     const buffer = Buffer.from([0, 1, 2, 3, 4, 5, 6, 7]);
     const sb = new StreamBuffer(buffer);
+
+    const nonFixedLengthNumericReadMethods = ['read', 'readString', 'readString7', 'readChar', 'read7BitInt'];
+    const readMethodsOnSb = Object.getOwnPropertyNames(Object.getPrototypeOf(sb)).filter(
+        m => m.startsWith('read') && !nonFixedLengthNumericReadMethods.includes(m)
+    );
+
+    const nonFixedLengthNumericWriteMethods = ['write', 'writeString', 'writeString7', 'writeChar', 'write7BitInt'];
+    const writeMethodsOnSb = Object.getOwnPropertyNames(Object.getPrototypeOf(sb)).filter(
+        m => m.startsWith('write') && !nonFixedLengthNumericWriteMethods.includes(m)
+    );
 
     const readMethods: [() => any, number][] = [
         [sb.readInt8, 1],
@@ -315,7 +327,7 @@ test('correct position increase (numeric read methods)', t => {
         [sb.readBigInt64LE, 8],
         [sb.readBigInt64BE, 8],
         [sb.readBigUInt64LE, 8],
-        [sb.readBigUInt64BE, 8],
+        [sb.readBigUInt64BE, 8]
     ];
 
     const writeMethods: [(val: any) => any, number, number | bigint][] = [
@@ -338,15 +350,21 @@ test('correct position increase (numeric read methods)', t => {
         [sb.writeBigInt64LE, 8, 0n],
         [sb.writeBigInt64BE, 8, 0n],
         [sb.writeBigUInt64LE, 8, 0n],
-        [sb.writeBigUInt64BE, 8, 0n],
+        [sb.writeBigUInt64BE, 8, 0n]
     ];
 
     readMethods.forEach(m => {
         let [method, len] = m;
         method.bind(sb)();
 
-        t.is(sb.getPos(), len);
+        t.is(sb.getPos(), len, method.name);
         sb.rewind();
+    });
+
+    // Check if we missed any read methods
+    readMethodsOnSb.forEach(m => {
+        let check = readMethods.find(rm => rm[0].name === m);
+        t.true(check !== undefined, `Missed read method: ${m}`);
     });
 
     writeMethods.forEach(m => {
@@ -355,10 +373,15 @@ test('correct position increase (numeric read methods)', t => {
         // BigInt methods complain when you pass a normal number, so use the 3rd argument to test them
         method.bind(sb)(testValue);
 
-        t.is(sb.getPos(), len);
+        t.is(sb.getPos(), len, method.name);
         sb.rewind();
-    })
+    });
 
+    // Check if we missed any write methods
+    writeMethodsOnSb.forEach(m => {
+        let check = writeMethods.find(rm => rm[0].name === m);
+        t.true(check !== undefined, `Missed write method: ${m}`);
+    });
 });
 
 test('write numbers', t => {
@@ -413,9 +436,9 @@ test('write 7bit encoded ints (like those used by .NET)', t => {
     sb.rewind();
 
     t.is(sb.read7BitInt(), 2);
-    t.is(sb.read7BitInt(), 256); 	// 2 << 7
-    t.is(sb.read7BitInt(), 32768);	// 2 << 14
-    t.is(sb.read7BitInt(), 257);	// 1 + (2 << 7)
+    t.is(sb.read7BitInt(), 256); // 2 << 7
+    t.is(sb.read7BitInt(), 32768); // 2 << 14
+    t.is(sb.read7BitInt(), 257); // 1 + (2 << 7)
 });
 
 test('write strings', t => {
@@ -436,14 +459,14 @@ test('write multibyte utf8 strings', t => {
     t.is(sb.tell(), 4);
     t.is(sb.isEOF(), true);
 
-    t.true(buffer.equals(Buffer.from([0xF0, 0x9F, 0x98, 0x83])));
+    t.true(buffer.equals(Buffer.from([0xf0, 0x9f, 0x98, 0x83])));
 });
 
-test('write multibyte utf8 stringzs', t => {
+test('write byte', t => {
     const buffer = Buffer.alloc(2);
     const sb = new StreamBuffer(buffer);
 
-    sb.writeByte(0xf0)
+    sb.writeByte(0xf0);
     sb.writeSByte(-2);
 
     t.deepEqual(buffer, [0xf0, 0xfe]);
@@ -462,15 +485,28 @@ test('write mixed encoded strings', t => {
 
     t.is(sb.readString(null, 'ucs2'), 'テスト');
     t.is(sb.readString(null, 'utf8'), 'hi!');
+
+    sb.rewind();
+    t.is(sb.readString(2, 'ucs2'), 'テ');
 });
 
 test('sbyte', t => {
     const buffer = Buffer.alloc(1);
     const sb = new StreamBuffer(buffer);
 
-    sb.writeByte(128)
+    sb.writeByte(128);
     sb.rewind();
-    t.is(sb.readSByte(), -128)
+    t.is(sb.readSByte(), -128);
+});
+
+test('readChar - utf8', t => {
+    const buffer = Buffer.from([0xc3, 0xa9]); // é, è
+    const sb = new StreamBuffer(buffer);
+
+    t.is(sb.readChar().charCodeAt(0), 65533);
+    t.is(sb.tell(), 1);
+    sb.rewind();
+    t.is(sb.readString(), 'é');
 });
 
 test('writeChar', t => {
@@ -508,7 +544,6 @@ test('isEOF tests', t => {
     sb.readByte();
     t.is(sb.tell(), 3);
     t.true(sb.isEOF());
-
 });
 
 test('README example', t => {
@@ -526,13 +561,12 @@ test('README example', t => {
     let name = buffer.readString(nameLength);
 
     buffer.skip(-nameLength); // go back to the beginning of the name
-    buffer.writeString(name.toUpperCase()); // overwrite the name in the buffer with something else	
+    buffer.writeString(name.toUpperCase()); // overwrite the name in the buffer with something else
     // README example end
 
-    t.is(hiscoreFile.toString('utf8', 4), 'abc') // original file
-    t.is(file.toString('utf8', 4), 'ABC')
+    t.is(hiscoreFile.toString('utf8', 4), 'abc'); // original file
+    t.is(file.toString('utf8', 4), 'ABC');
 });
-
 
 test('read 64 bit unsigned integers', t => {
     const buffer = Buffer.from([0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]);
@@ -548,4 +582,4 @@ test('read 64 bit signed integers', t => {
 
     let a = sb.readBigInt64LE();
     t.is(a, -2n);
-}); 
+});

@@ -1,5 +1,5 @@
 interface StreamBufferConstructor {
-    new(buf: Buffer | StreamBuffer): StreamBuffer;
+    new (buf: Buffer | StreamBuffer): StreamBuffer;
     /** @deprecated Use `new StreamBuffer()` or `StreamBuffer.from()` */
     (buf: Buffer | StreamBuffer): StreamBuffer;
     from(buf: Buffer | StreamBuffer): StreamBuffer;
@@ -17,7 +17,7 @@ class StreamBuffer {
             if (buffer instanceof StreamBuffer) {
                 buffer = buffer.buffer;
             } else {
-                throw new TypeError("Not a valid Buffer or StreamBuffer");
+                throw new TypeError('Not a valid Buffer or StreamBuffer');
             }
         }
         this.#buf = buffer;
@@ -99,8 +99,12 @@ class StreamBuffer {
     readBigUInt64BE() {
         return this.#readBigInt(this.#buf.readBigUInt64BE(this.#pos), 8);
     }
-    readByte() { return this.readUInt8(); }
-    readSByte() { return this.readInt8(); }
+    readByte() {
+        return this.readUInt8();
+    }
+    readSByte() {
+        return this.readInt8();
+    }
 
     writeInt8(value: number) {
         return this.#writeNumber(value, this.#buf.writeInt8(value, this.#pos));
@@ -156,12 +160,18 @@ class StreamBuffer {
     writeBigUInt64BE(value: bigint) {
         return this.#writeBigInt(value, this.#buf.writeBigUInt64BE(value, this.#pos));
     }
-    writeByte(val: number) { return this.writeUInt8(val); }
-    writeSByte(val: number) { return this.writeInt8(val); }
+    writeByte(val: number) {
+        return this.writeUInt8(val);
+    }
+    writeSByte(val: number) {
+        return this.writeInt8(val);
+    }
 
     // Read 7bit encoded integer (like those used by .NET's BinaryWriter)
     read7BitInt() {
-        let byte = 0, shift = 0, num = 0;
+        let byte = 0,
+            shift = 0,
+            num = 0;
         do {
             byte = this.readByte();
             num |= (byte & 0x7f) << shift;
@@ -176,18 +186,18 @@ class StreamBuffer {
             this.writeByte((val | 0x80) & 0xff); // set 8th to 1, keep only the first 8 bits
             val >>= 7;
         }
-        this.writeByte(val & 0x7f)
+        this.writeByte(val & 0x7f);
     }
 
-    // Read (sub) buffer 
+    // Read (sub) buffer
     read(numBytes: number) {
-        const res = this.#buf.slice(this.#pos, this.#pos + numBytes);
+        const res = this.#buf.subarray(this.#pos, this.#pos + numBytes);
         this.#pos = this.#pos + numBytes;
         return new StreamBuffer(res);
     }
     write(src: Buffer) {
         if (!(src instanceof Buffer)) {
-            throw new TypeError("Not a valid Buffer");
+            throw new TypeError('Not a valid Buffer');
         }
         this.#pos = this.#pos + src.copy(this.#buf, this.#pos, 0);
         return src;
@@ -200,11 +210,11 @@ class StreamBuffer {
                 if (this.#pos + length >= this.#buf.length || this.#buf[this.#pos + length] === 0) break;
             }
         }
-        return this.#buf.toString(encoding || "utf8", this.#pos, this.#pos + length);
+        return this.#buf.toString(encoding || 'utf8', this.#pos, this.#pos + length);
     }
     readString(length?: number, encoding?: BufferEncoding) {
         const res = this.#readString(length, encoding);
-        this.#pos = this.#pos + (length == undefined ? Buffer.byteLength(res, encoding) + 1 : length);
+        this.#pos = this.#pos + (length ?? Buffer.byteLength(res, encoding) + 1);
         return res;
     }
     readChar(encoding?: BufferEncoding) {
@@ -250,18 +260,24 @@ class StreamBuffer {
     rewind() {
         this.#pos = 0;
     }
-    getPos() { return this.#pos; };
-    tell() { return this.getPos(); }
-    isEOF() { return this.#pos >= this.#buf.length; };
+    getPos() {
+        return this.#pos;
+    }
+    tell() {
+        return this.getPos();
+    }
+    isEOF() {
+        return this.#pos >= this.#buf.length;
+    }
 }
 
 // Based on https://stackoverflow.com/a/54456318/1423052
 function StreamBufferOptionalNew<X extends Function>(c: X): StreamBufferConstructor {
-    return (new Proxy(c, {
+    return new Proxy(c, {
         apply: (t, _, a) => new (<any>t)(...a)
-    }) as any as StreamBufferConstructor);
+    }) as any as StreamBufferConstructor;
 }
 
 const StreamBufferWrapper = StreamBufferOptionalNew(StreamBuffer);
 
-export default StreamBufferWrapper
+export default StreamBufferWrapper;

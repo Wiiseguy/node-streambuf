@@ -90,7 +90,7 @@ Writes a 7 bit encoded integer, like those used by [.NET](https://msdn.microsoft
 
 .readChar([encoding])
 ---
-Reads a single character from the buffer according to the specified character encoding.
+Reads a single character from the buffer according to the specified character encoding. Multi-byte characters are not read - use `readString` for that instead.
 'encoding' defaults to utf8.
 
 .writeChar([encoding])
