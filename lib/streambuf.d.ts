@@ -8,6 +8,7 @@ interface StreamBufferConstructor {
 declare class StreamBuffer {
     #private;
     get buffer(): Buffer;
+    get length(): number;
     constructor(buffer: Buffer | StreamBuffer);
     static from(buffer: Buffer | StreamBuffer): StreamBuffer;
     readInt8(): number;
@@ -15,11 +16,15 @@ declare class StreamBuffer {
     readInt16BE(): number;
     readInt32LE(): number;
     readInt32BE(): number;
+    readIntLE(byteLength: number): number;
+    readIntBE(byteLength: number): number;
     readUInt8(): number;
     readUInt16LE(): number;
     readUInt16BE(): number;
     readUInt32LE(): number;
     readUInt32BE(): number;
+    readUIntLE(byteLength: number): number;
+    readUIntBE(byteLength: number): number;
     readFloatLE(): number;
     readFloatBE(): number;
     readDoubleLE(): number;
@@ -35,11 +40,15 @@ declare class StreamBuffer {
     writeInt16BE(value: number): number;
     writeInt32LE(value: number): number;
     writeInt32BE(value: number): number;
+    writeIntLE(value: number, byteLength: number): number;
+    writeIntBE(value: number, byteLength: number): number;
     writeUInt8(value: number): number;
     writeUInt16LE(value: number): number;
     writeUInt16BE(value: number): number;
     writeUInt32LE(value: number): number;
     writeUInt32BE(value: number): number;
+    writeUIntLE(value: number, byteLength: number): number;
+    writeUIntBE(value: number, byteLength: number): number;
     writeFloatLE(value: number): number;
     writeFloatBE(value: number): number;
     writeDoubleLE(value: number): number;
@@ -51,15 +60,17 @@ declare class StreamBuffer {
     writeByte(val: number): number;
     writeSByte(val: number): number;
     read7BitInt(): number;
-    write7BitInt(val: number): void;
+    write7BitInt(val: number): number;
     read(numBytes: number): StreamBuffer;
     write(src: Buffer): Buffer;
     readString(length?: number, encoding?: BufferEncoding): string;
     readChar(encoding?: BufferEncoding): string;
     readString7(encoding?: BufferEncoding): string;
+    readString0(encoding?: BufferEncoding): string;
     writeString(val: string, encoding?: BufferEncoding): string;
     writeChar(val: string, encoding?: BufferEncoding): string;
     writeString7(val: string, encoding?: BufferEncoding): string;
+    writeString0(val: string, encoding?: BufferEncoding): string;
     peekString(length?: number, encoding?: BufferEncoding): string;
     skip(numBytes?: number): void;
     setPos(position: number): void;

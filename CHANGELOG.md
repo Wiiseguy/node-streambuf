@@ -1,8 +1,13 @@
 # **streambuf** Changelog
 
-### [1.2.4] (TBD)
+### [1.3.0] (29-jun-2024)
+- Added `readString0` and `writeString0` methods
+- Added `readIntLE`, `readIntBE`, `readUIntLE`, `readUIntBE`, `writeIntLE`, `writeIntBE`, `writeUIntLE`, `writeUIntBE` methods
+- Added `length` property to the StreamBuffer class
 - Added extra TS param typings
-- Added some more tests + mechanism to check if every numeric and write method is tested for length
+- Added more tests 
+  - test for checking every numeric and write method is tested for length
+  - test for checking if every Buffer read/write method is implemented in StreamBuffer
 - Added .prettierrc
 - Refactored deprecated Buffer method `slice` to `subarray`
 

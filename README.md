@@ -44,8 +44,12 @@ Constructor: initialize with another StreamBuffer object's underlying Buffer.
 
 StreamBuffer numeric methods
 ---
-readInt8, readInt16LE, readInt16BE, readInt32LE, readInt32BE, readUInt8, readUInt16LE, readUInt16BE, readUInt32LE, readUInt32BE, readFloatLE, readFloatBE, readDoubleLE, readDoubleBE
-writeInt8, writeInt16LE, writeInt16BE, writeInt32LE, writeInt32BE, writeUInt8, writeUInt16LE, writeUInt16BE, writeUInt32LE, writeUInt32BE, writeFloatLE, writeFloatBE, writeDoubleLE, writeDoubleBE
+readInt8, readInt16LE, readInt16BE, readInt32LE, readInt32BE, readIntLE, readIntBE,
+readUInt8, readUInt16LE, readUInt16BE, readUInt32LE, readUInt32BE, readUIntLE, readUIntBE,
+readFloatLE, readFloatBE, readDoubleLE, readDoubleBE
+writeInt8, writeInt16LE, writeInt16BE, writeInt32LE, writeInt32BE, writeIntLE, writeIntBE,
+writeUInt8, writeUInt16LE, writeUInt16BE, writeUInt32LE, writeUInt32BE, 
+writeFloatLE, writeFloatBE, writeDoubleLE, writeDoubleBE
 
 StreamBuffer BigInt methods
 ---
@@ -102,15 +106,25 @@ Writes a single character to the buffer according to the specified character enc
 ---
 Decodes to a string according to the specified character encoding in encoding and length.
 'encoding' defaults to utf8.
-'length' is optional. If left undefined, it will use the first occuring zero (0) byte as the end of the string.
+'length' is optional. If left undefined, it will use the first occurrence of a zero (0) byte as the end of the string.
+
+.writeString(str, [encoding])
+---
+Writes a string to the underlying buffer with the specified encoding.
+'encoding' defaults to utf8.
 
 .peekString([length, [encoding]])
 ---
 Functions the same way as .readString(), but does not update the offset.
 
-.writeString(str, [encoding])
+.readString0([encoding])
 ---
-Writes a string to the underlying buffer with the specified encoding.
+Reads a string from the buffer according to the specified character encoding, stopping at the first zero (0) byte. Similar to calling .readString() without a length parameter, but more implicit.
+'encoding' defaults to utf8.
+
+.writeString0(str, [encoding])
+---
+Writes a string to the underlying buffer with the specified encoding, followed by a zero (0) byte.
 'encoding' defaults to utf8.
 
 .readString7([encoding])

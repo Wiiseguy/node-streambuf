@@ -11,6 +11,9 @@ class StreamBuffer {
     get buffer() {
         return this.#buf;
     }
+    get length() {
+        return this.#buf.length;
+    }
 
     constructor(buffer: Buffer | StreamBuffer) {
         if (!(buffer instanceof Buffer)) {
@@ -45,6 +48,7 @@ class StreamBuffer {
         return val;
     }
 
+    // Int
     readInt8() {
         return this.#readNumber(this.#buf.readInt8(this.#pos), 1);
     }
@@ -60,6 +64,14 @@ class StreamBuffer {
     readInt32BE() {
         return this.#readNumber(this.#buf.readInt32BE(this.#pos), 4);
     }
+    readIntLE(byteLength: number) {
+        return this.#readNumber(this.#buf.readIntLE(this.#pos, byteLength), byteLength);
+    }
+    readIntBE(byteLength: number) {
+        return this.#readNumber(this.#buf.readIntBE(this.#pos, byteLength), byteLength);
+    }
+
+    // UInt
     readUInt8() {
         return this.#readNumber(this.#buf.readUInt8(this.#pos), 1);
     }
@@ -75,6 +87,14 @@ class StreamBuffer {
     readUInt32BE() {
         return this.#readNumber(this.#buf.readUInt32BE(this.#pos), 4);
     }
+    readUIntLE(byteLength: number) {
+        return this.#readNumber(this.#buf.readUIntLE(this.#pos, byteLength), byteLength);
+    }
+    readUIntBE(byteLength: number) {
+        return this.#readNumber(this.#buf.readUIntBE(this.#pos, byteLength), byteLength);
+    }
+
+    // Floating point
     readFloatLE() {
         return this.#readNumber(this.#buf.readFloatLE(this.#pos), 4);
     }
@@ -87,6 +107,8 @@ class StreamBuffer {
     readDoubleBE() {
         return this.#readNumber(this.#buf.readDoubleBE(this.#pos), 8);
     }
+
+    // BigInt
     readBigInt64LE() {
         return this.#readBigInt(this.#buf.readBigInt64LE(this.#pos), 8);
     }
@@ -99,6 +121,8 @@ class StreamBuffer {
     readBigUInt64BE() {
         return this.#readBigInt(this.#buf.readBigUInt64BE(this.#pos), 8);
     }
+
+    // Byte
     readByte() {
         return this.readUInt8();
     }
@@ -106,6 +130,7 @@ class StreamBuffer {
         return this.readInt8();
     }
 
+    // Int
     writeInt8(value: number) {
         return this.#writeNumber(value, this.#buf.writeInt8(value, this.#pos));
     }
@@ -121,6 +146,14 @@ class StreamBuffer {
     writeInt32BE(value: number) {
         return this.#writeNumber(value, this.#buf.writeInt32BE(value, this.#pos));
     }
+    writeIntLE(value: number, byteLength: number) {
+        return this.#writeNumber(value, this.#buf.writeIntLE(value, this.#pos, byteLength));
+    }
+    writeIntBE(value: number, byteLength: number) {
+        return this.#writeNumber(value, this.#buf.writeIntBE(value, this.#pos, byteLength));
+    }
+
+    // UInt
     writeUInt8(value: number) {
         return this.#writeNumber(value, this.#buf.writeUInt8(value, this.#pos));
     }
@@ -136,6 +169,14 @@ class StreamBuffer {
     writeUInt32BE(value: number) {
         return this.#writeNumber(value, this.#buf.writeUInt32BE(value, this.#pos));
     }
+    writeUIntLE(value: number, byteLength: number) {
+        return this.#writeNumber(value, this.#buf.writeUIntLE(value, this.#pos, byteLength));
+    }
+    writeUIntBE(value: number, byteLength: number) {
+        return this.#writeNumber(value, this.#buf.writeUIntBE(value, this.#pos, byteLength));
+    }
+
+    // Floating point
     writeFloatLE(value: number) {
         return this.#writeNumber(value, this.#buf.writeFloatLE(value, this.#pos));
     }
@@ -148,6 +189,8 @@ class StreamBuffer {
     writeDoubleBE(value: number) {
         return this.#writeNumber(value, this.#buf.writeDoubleBE(value, this.#pos));
     }
+
+    // BigInt
     writeBigInt64LE(value: bigint) {
         return this.#writeBigInt(value, this.#buf.writeBigInt64LE(value, this.#pos));
     }
@@ -160,6 +203,8 @@ class StreamBuffer {
     writeBigUInt64BE(value: bigint) {
         return this.#writeBigInt(value, this.#buf.writeBigUInt64BE(value, this.#pos));
     }
+
+    // Byte
     writeByte(val: number) {
         return this.writeUInt8(val);
     }
@@ -187,6 +232,7 @@ class StreamBuffer {
             val >>= 7;
         }
         this.writeByte(val & 0x7f);
+        return val;
     }
 
     // Read (sub) buffer
@@ -224,6 +270,9 @@ class StreamBuffer {
         const len = this.read7BitInt();
         return this.readString(len, encoding);
     }
+    readString0(encoding?: BufferEncoding) {
+        return this.readString(undefined, encoding);
+    }
     writeString(val: string, encoding?: BufferEncoding) {
         this.#pos = this.#pos + this.#buf.write(val, this.#pos, encoding);
         return val;
@@ -236,6 +285,11 @@ class StreamBuffer {
         const len = Buffer.byteLength(val, encoding);
         this.write7BitInt(len);
         return this.writeString(val, encoding);
+    }
+    writeString0(val: string, encoding?: BufferEncoding) {
+        this.writeString(val, encoding);
+        this.writeByte(0);
+        return val;
     }
     peekString(length?: number, encoding?: BufferEncoding) {
         return this.#readString(length, encoding);
