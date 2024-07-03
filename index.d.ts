@@ -1,3 +1,3 @@
-import StreamBufferWrapper from "./streambuf";
+import * as sb from "./streambuf";
 
-export = StreamBufferWrapper;
+export = sb;

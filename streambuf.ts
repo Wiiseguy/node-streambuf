@@ -1,11 +1,4 @@
-interface StreamBufferConstructor {
-    new (buf: Buffer | StreamBuffer): StreamBuffer;
-    /** @deprecated Use `new StreamBuffer()` or `StreamBuffer.from()` */
-    (buf: Buffer | StreamBuffer): StreamBuffer;
-    from(buf: Buffer | StreamBuffer): StreamBuffer;
-}
-
-class StreamBuffer {
+export class StreamBuffer {
     #buf: Buffer;
     #pos = 0;
     get buffer() {
@@ -324,14 +317,3 @@ class StreamBuffer {
         return this.#pos >= this.#buf.length;
     }
 }
-
-// Based on https://stackoverflow.com/a/54456318/1423052
-function StreamBufferOptionalNew<X extends Function>(c: X): StreamBufferConstructor {
-    return new Proxy(c, {
-        apply: (t, _, a) => new (<any>t)(...a)
-    }) as any as StreamBufferConstructor;
-}
-
-const StreamBufferWrapper = StreamBufferOptionalNew(StreamBuffer);
-
-export default StreamBufferWrapper;

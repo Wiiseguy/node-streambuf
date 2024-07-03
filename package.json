@@ -39,7 +39,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^18.7.6",
-    "aqa": "^1.6.10",
+    "aqa": "^1.6.12",
     "c8": "^10.1.2"
   }
 }
