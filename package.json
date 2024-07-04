@@ -1,9 +1,8 @@
 {
   "name": "streambuf",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "Streamed Buffers - .NET's BinaryReader facsimile",
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "main": "./lib/streambuf.js",
   "scripts": {
     "test": "aqa",
     "test:watch": "aqa --watch",
@@ -39,7 +38,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^18.7.6",
-    "aqa": "^1.6.10",
+    "aqa": "^1.6.12",
     "c8": "^10.1.2"
   }
 }

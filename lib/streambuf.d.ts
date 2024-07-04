@@ -1,11 +1,5 @@
 /// <reference types="node" />
-interface StreamBufferConstructor {
-    new (buf: Buffer | StreamBuffer): StreamBuffer;
-    /** @deprecated Use `new StreamBuffer()` or `StreamBuffer.from()` */
-    (buf: Buffer | StreamBuffer): StreamBuffer;
-    from(buf: Buffer | StreamBuffer): StreamBuffer;
-}
-declare class StreamBuffer {
+export declare class StreamBuffer {
     #private;
     get buffer(): Buffer;
     get length(): number;
@@ -80,5 +74,3 @@ declare class StreamBuffer {
     tell(): number;
     isEOF(): boolean;
 }
-declare const StreamBufferWrapper: StreamBufferConstructor;
-export default StreamBufferWrapper;

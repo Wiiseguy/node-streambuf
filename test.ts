@@ -1,26 +1,23 @@
 import * as test from 'aqa';
-import StreamBuffer from './streambuf';
+import { StreamBuffer } from './streambuf';
 
 test('initializers', t => {
     const sb1 = new StreamBuffer(Buffer.from([1]));
     t.true(sb1 instanceof StreamBuffer);
 
-    /** @ts-ignore Deprecated, but should still work for backwards compatibility  */
-    const sb2 = StreamBuffer(Buffer.from([1]));
+    const sb2 = StreamBuffer.from(Buffer.from([1]));
     t.true(sb2 instanceof StreamBuffer);
 
-    const sb3 = StreamBuffer.from(Buffer.from([1]));
-    t.true(sb3 instanceof StreamBuffer);
-
-    /** @ts-ignore Intentional wrong param */
-    t.throws(_ => new StreamBuffer('hello'), { instanceOf: TypeError });
+    /** @ts-ignore Intentional (wrong param) */
+    let e = t.throws(_ => new StreamBuffer('hello'), { instanceOf: TypeError });
+    t.is(e.message, 'Not a valid Buffer or StreamBuffer')
 
     const buffer = Buffer.from([0, 1]);
-    const sb4 = new StreamBuffer(buffer);
-    const sb5 = new StreamBuffer(sb4);
+    const sb3 = new StreamBuffer(buffer);
+    const sb4 = new StreamBuffer(sb3);
 
-    t.false(sb4 == sb5);
-    t.true(sb4.buffer == sb5.buffer);
+    t.false(sb3 == sb4);
+    t.true(sb3.buffer == sb4.buffer);
 });
 
 test('buffer access', t => {
@@ -356,7 +353,11 @@ test('Buffer implementations', t => {
     const missingReadMethods = bufferReadMethods.filter(m => !sbReadMethods.includes(m));
     const missingWriteMethods = bufferWriteMethods.filter(m => !sbWriteMethods.includes(m));
 
-    t.is(missingReadMethods.length + missingWriteMethods.length, 0, `All read and write methods should be implemented. Missing read methods: ${missingReadMethods}, missing write methods: ${missingWriteMethods}`);
+    t.is(
+        missingReadMethods.length + missingWriteMethods.length,
+        0,
+        `All read and write methods should be implemented. Missing read methods: ${missingReadMethods}, missing write methods: ${missingWriteMethods}`
+    );
 });
 
 test('correct position increase (numeric methods)', t => {
@@ -544,7 +545,6 @@ test('correct position increase (numeric methods with byte length param)', t => 
         t.is(sb.getPos(), i);
         sb.rewind();
     }
-
 });
 
 test('write numbers', t => {
