@@ -18,7 +18,7 @@ $ npm install streambuf
 
 ```js
 const fs = require('fs');
-const StreamBuffer = require('streambuf');
+const { StreamBuffer } = require('streambuf');
 
 let buffer = StreamBuffer.from(fs.readFileSync('hiscore.dat'));
 
