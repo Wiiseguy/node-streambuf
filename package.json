@@ -1,6 +1,6 @@
 {
   "name": "streambuf",
-  "version": "1.3.0",
+  "version": "2.0.0-alpha.0",
   "description": "Streamed Buffers - .NET's BinaryReader facsimile",
   "main": "./index.js",
   "types": "./index.d.ts",
