@@ -1,9 +1,11 @@
 export class StreamBuffer {
     #buf: Buffer;
     #pos = 0;
+
     get buffer() {
         return this.#buf;
     }
+    
     get length() {
         return this.#buf.length;
     }

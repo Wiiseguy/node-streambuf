@@ -1,9 +1,8 @@
 {
   "name": "streambuf",
   "version": "2.0.0-alpha.0",
-  "description": "Streamed Buffers - .NET's BinaryReader facsimile",
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "description": "Streamed Buffers - .NET's BinaryReader facsimile",  
+  "main": "./lib/streambuf.js",
   "scripts": {
     "test": "aqa",
     "test:watch": "aqa --watch",

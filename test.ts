@@ -9,7 +9,8 @@ test('initializers', t => {
     t.true(sb2 instanceof StreamBuffer);
 
     /** @ts-ignore Intentional (wrong param) */
-    t.throws(_ => new StreamBuffer('hello'), { instanceOf: TypeError });
+    let e = t.throws(_ => new StreamBuffer('hello'), { instanceOf: TypeError });
+    t.is(e.message, 'Not a valid Buffer or StreamBuffer')
 
     const buffer = Buffer.from([0, 1]);
     const sb3 = new StreamBuffer(buffer);
