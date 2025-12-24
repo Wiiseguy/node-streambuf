@@ -1,7 +1,6 @@
-/// <reference types="node" />
 export declare class StreamBuffer {
     #private;
-    get buffer(): Buffer;
+    get buffer(): Buffer<ArrayBufferLike>;
     get length(): number;
     constructor(buffer: Buffer | StreamBuffer);
     static from(buffer: Buffer | StreamBuffer): StreamBuffer;
@@ -56,7 +55,7 @@ export declare class StreamBuffer {
     read7BitInt(): number;
     write7BitInt(val: number): number;
     read(numBytes: number): StreamBuffer;
-    write(src: Buffer): Buffer;
+    write(src: Buffer): Buffer<ArrayBufferLike>;
     readString(length?: number, encoding?: BufferEncoding): string;
     readChar(encoding?: BufferEncoding): string;
     readString7(encoding?: BufferEncoding): string;

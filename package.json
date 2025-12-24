@@ -37,8 +37,8 @@
   "author": "Wiiseguy",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^18.7.6",
+    "@types/node": "^22.19.3",
     "aqa": "^1.6.12",
-    "c8": "^10.1.2"
+    "c8": "^10.1.3"
   }
 }
