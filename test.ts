@@ -373,6 +373,7 @@ test('correct position increase (numeric methods)', t => {
         'readString7',
         'readString0',
         'readChar',
+        'readChars',
         'read7BitInt',
         'readIntLE',
         'readIntBE',
@@ -389,6 +390,7 @@ test('correct position increase (numeric methods)', t => {
         'writeString7',
         'writeString0',
         'writeChar',
+        'writeChars',
         'write7BitInt',
         'writeIntLE',
         'writeIntBE',
@@ -690,6 +692,22 @@ test('writeChar - multibyte utf8 strings', t => {
 
     sb.writeChar('ë')
     t.deepEqual(buffer, [0, 0, 0, 0])
+})
+
+test('readChars', t => {
+    const buffer = Buffer.from('hi\x00\x00\x00world')
+    const sb = new StreamBuffer(buffer)
+
+    t.is(sb.readChars(5), 'hi')
+    t.is(sb.readChars(5), 'world')
+})
+
+test('writeChars', t => {
+    const buffer = Buffer.alloc(10)
+    const sb = new StreamBuffer(buffer)
+    sb.writeChars('hi', 5)
+    sb.writeChars('world', 5)
+    t.deepEqual(buffer, Buffer.from('hi\x00\x00\x00world'))
 })
 
 test('isEOF tests', t => {

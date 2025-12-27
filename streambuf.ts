@@ -261,6 +261,14 @@ export class StreamBuffer {
     readChar(encoding?: BufferEncoding) {
         return this.readString(1, encoding)
     }
+    readChars(length: number, encoding?: BufferEncoding) {
+        const str = this.readString(length, encoding)
+        const nullIndex = str.indexOf('\0')
+        if (nullIndex !== -1) {
+            return str.substring(0, nullIndex)
+        }
+        return str
+    }
     readString7(encoding?: BufferEncoding) {
         const len = this.read7BitInt()
         return this.readString(len, encoding)
@@ -274,6 +282,14 @@ export class StreamBuffer {
     }
     writeChar(val: string, encoding?: BufferEncoding) {
         this.#pos = this.#pos + this.#buf.write(val, this.#pos, 1, encoding)
+        return val
+    }
+    writeChars(val: string, length: number, encoding?: BufferEncoding) {
+        const bytesWritten = this.#buf.write(val, this.#pos, length, encoding)
+        this.#pos = this.#pos + bytesWritten
+        for (let i = bytesWritten; i < length; i++) {
+            this.writeByte(0)
+        }
         return val
     }
     writeString7(val: string, encoding?: BufferEncoding) {

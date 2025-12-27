@@ -6,6 +6,7 @@
   "scripts": {
     "test": "aqa",
     "test:watch": "aqa --watch",
+    "tsc:watch": "npx tsc --watch",
     "test:coverage": "c8 npm test & c8 report -r lcov"
   },
   "repository": {

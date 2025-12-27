@@ -1,5 +1,9 @@
 # **streambuf** Changelog
 
+### [2.1.0] (27-dec-2025)
+
+-   Added `readChars` and `writeChars` methods
+
 ### [2.0.0] (4-jul-2024)
 
 -   Removed support for non-new constructor, changed export

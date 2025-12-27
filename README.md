@@ -103,6 +103,16 @@ Reads a single character from the buffer according to the specified character en
 Writes a single character to the buffer according to the specified character encoding. Multi-byte characters are not written - use `writeString` for that instead.
 'encoding' defaults to utf8.
 
+## .readChars(length, [encoding])
+
+Reads a fixed number of characters from the buffer according to the specified character encoding. The resulting string strips any trailing null characters.
+'encoding' defaults to utf8.
+
+## .writeChars(str, length, [encoding])
+
+Writes a string to the underlying buffer with the specified encoding, padding with null characters (0) if the string is shorter than length.
+'encoding' defaults to utf8.
+
 ## .readString([length, [encoding]])
 
 Decodes to a string according to the specified character encoding in encoding and length.
@@ -120,7 +130,7 @@ Functions the same way as .readString(), but does not update the offset.
 
 ## .readString0([encoding])
 
-Reads a string from the buffer according to the specified character encoding, stopping at the first zero (0) byte. Similar to calling .readString() without a length parameter, but more implicit.
+Reads a string from the buffer according to the specified character encoding, stopping at the first zero (0) byte. Similar to `.readString()` or `.readString(undefined, encoding)`, but more implicit.
 'encoding' defaults to utf8.
 
 ### Example:

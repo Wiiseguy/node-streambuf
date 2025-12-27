@@ -58,10 +58,12 @@ export declare class StreamBuffer {
     write(src: Buffer): Buffer<ArrayBufferLike>;
     readString(length?: number, encoding?: BufferEncoding): string;
     readChar(encoding?: BufferEncoding): string;
+    readChars(length: number, encoding?: BufferEncoding): string;
     readString7(encoding?: BufferEncoding): string;
     readString0(encoding?: BufferEncoding): string;
     writeString(val: string, encoding?: BufferEncoding): string;
     writeChar(val: string, encoding?: BufferEncoding): string;
+    writeChars(val: string, length: number, encoding?: BufferEncoding): string;
     writeString7(val: string, encoding?: BufferEncoding): string;
     writeString0(val: string, encoding?: BufferEncoding): string;
     peekString(length?: number, encoding?: BufferEncoding): string;
